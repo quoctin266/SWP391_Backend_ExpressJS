@@ -6,7 +6,6 @@ const getHomepage = (req, res) => {
 
 const getUsers = async (req, res) => {
   const connection = await getConnection();
-
   const [rows] = await connection.execute("SELECT * FROM `users`");
   res.json(rows);
 };
