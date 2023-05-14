@@ -1,20 +1,23 @@
 import * as dotenv from "dotenv";
 import express from "express";
-import cors from "cors";
 import router from "./routes/api";
 import configViewEngine from "./config/viewEngine";
+import configCORS from "./config/configCORS";
 
 dotenv.config();
 
 const app = express();
 
 //config cors
-const corsOptions = {
-  origin: process.env.REACT_URL,
-  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-};
+configCORS(app);
 
-app.use(cors(corsOptions));
+//config request body
+app.use(express.json());
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
 
 //config view engine
 configViewEngine(app);
