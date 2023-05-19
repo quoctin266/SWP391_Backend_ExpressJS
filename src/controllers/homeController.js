@@ -33,8 +33,14 @@ const postNewUser = async (req, res) => {
   res.json(createdUser);
 };
 
+const getAllNews = async (req, res) => {
+  const [rows] = await connection.execute("SELECT * FROM `news`");
+  res.json(rows);
+};
+
 module.exports = {
   getHomepage,
   getUsers,
   postNewUser,
+  getAllNews,
 };
