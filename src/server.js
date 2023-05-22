@@ -3,10 +3,15 @@ import express from "express";
 import router from "./routes/api";
 import configViewEngine from "./config/viewEngine";
 import configCORS from "./config/configCORS";
+import multer from "multer";
 
 dotenv.config();
 
 const app = express();
+
+const upload = multer({
+  limits: { fieldSize: 25 * 1024 * 1024 },
+});
 
 //config cors
 configCORS(app);
@@ -18,6 +23,7 @@ app.use(
     extended: true,
   })
 );
+app.use(upload.array());
 
 //config view engine
 configViewEngine(app);
