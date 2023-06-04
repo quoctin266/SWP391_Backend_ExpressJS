@@ -4,6 +4,7 @@ import router from "./routes/api";
 import configViewEngine from "./config/viewEngine";
 import configCORS from "./config/configCORS";
 import multer from "multer";
+import errorHandler from "./middleware/errorHandler";
 
 dotenv.config();
 
@@ -33,6 +34,8 @@ app.use("/", router);
 
 const hostname = process.env.HOST_NAME;
 const port = process.env.PORT || 8888;
+
+app.use(errorHandler);
 
 app.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
