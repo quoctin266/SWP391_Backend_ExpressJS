@@ -6,7 +6,9 @@ import {
   getAllNews,
   getAllServicesIntro,
   getAllShippingCondition,
+  postLogin,
 } from "../controllers/homeController";
+import tryCatch from "../utils/tryCatch";
 
 const router = express.Router();
 
@@ -21,8 +23,11 @@ router.get("/home", getHomepage);
 // api format
 router.get("/api/v1/users", getUsers);
 router.post("/api/v1/create-user", postNewUser);
+
+// offcial API
 router.get("/api/v1/news", getAllNews);
 router.get("/api/v1/services-intro", getAllServicesIntro);
 router.get("/api/v1/shipping-condition", getAllShippingCondition);
+router.post("/api/v1/login", tryCatch(postLogin));
 
 module.exports = router;

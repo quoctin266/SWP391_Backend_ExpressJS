@@ -1,5 +1,7 @@
 import connection from "../config/connectDB";
 import _ from "lodash";
+import { AUTHENTICATION_FAIL } from "../utils/errorCodes";
+import AppError from "../custom/AppError";
 
 // api used to test set up
 const getHomepage = (req, res) => {
@@ -73,6 +75,26 @@ const getAllShippingCondition = async (req, res) => {
   res.json(rows);
 };
 
+const postLogin = async (req, res, next) => {
+  let { email, password, delay } = req.body;
+  let sql = "SELECT * FROM `account` where email = ? and password = ?";
+
+  const [rows] = await connection.execute(sql, [email, password]);
+  if (rows.length === 0) {
+    throw new AppError(
+      AUTHENTICATION_FAIL,
+      "Incorrect email or password",
+      200,
+      delay
+    );
+  }
+
+  delete rows[0].account_id;
+  setTimeout(() => {
+    res.status(200).json({ DT: rows[0], EC: 0, EM: "Login successfully." });
+  }, delay);
+};
+
 module.exports = {
   getHomepage,
   getUsers,
@@ -80,4 +102,5 @@ module.exports = {
   getAllNews,
   getAllServicesIntro,
   getAllShippingCondition,
+  postLogin,
 };
