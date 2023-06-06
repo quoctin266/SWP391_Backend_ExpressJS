@@ -7,6 +7,7 @@ import {
   REGISTER_FAIL,
   FETCHING_FAIL,
   UPDATE_FAIL,
+  WRONG_PASSWORD,
 } from "../utils/errorCodes";
 import AppError from "../custom/AppError";
 import moment from "moment";
@@ -200,6 +201,31 @@ const putUpdateProfile = async (req, res, next) => {
   res.status(200).json({ DT: rows[0], EC: 0, EM: "Update successfully." });
 };
 
+const putResetPassword = async (req, res, next) => {
+  let { account_id, oldPassword, newPassword } = req.body;
+
+  let sql = "SELECT password FROM `account` where account_id = ?";
+  let [rows] = await connection.execute(sql, [account_id]);
+  if (rows[0].password !== oldPassword) {
+    throw new AppError(WRONG_PASSWORD, "Incorrect password.", 200);
+  }
+
+  sql = "UPDATE `account` SET password = ? WHERE account_id = ?";
+  [rows] = await connection.execute(sql, [newPassword, account_id]);
+
+  if (rows.length === 0) {
+    throw new AppError(UPDATE_FAIL, "Something went wrong.", 200);
+  }
+
+  res
+    .status(200)
+    .json({
+      DT: { password: newPassword },
+      EC: 0,
+      EM: "Update password successfully.",
+    });
+};
+
 module.exports = {
   getHomepage,
   getUsers,
@@ -211,4 +237,5 @@ module.exports = {
   postSignup,
   getStation,
   putUpdateProfile,
+  putResetPassword,
 };

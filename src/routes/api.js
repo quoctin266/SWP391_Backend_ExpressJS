@@ -10,6 +10,7 @@ import {
   postSignup,
   getStation,
   putUpdateProfile,
+  putResetPassword,
 } from "../controllers/homeController";
 import tryCatch from "../utils/tryCatch";
 
@@ -35,5 +36,6 @@ router.post("/api/v1/login", tryCatch(postLogin));
 router.post("/api/v1/register", tryCatch(postSignup));
 router.get("/api/v1/station", tryCatch(getStation));
 router.put("/api/v1/update-profile", tryCatch(putUpdateProfile));
+router.put("/api/v1/reset-password", tryCatch(putResetPassword));
 
 module.exports = router;
