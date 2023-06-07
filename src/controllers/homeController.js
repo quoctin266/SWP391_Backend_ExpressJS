@@ -98,7 +98,14 @@ const postLogin = async (req, res, next) => {
     );
   }
 
-  rows[0].birthday = moment(rows[0].birthday).format("YYYY-MM-DD");
+  if (rows[0].birthday) {
+    rows[0].birthday = moment(rows[0].birthday).format("YYYY-MM-DD");
+  }
+
+  if (rows[0].avatar) {
+    rows[0].avatar = Buffer.from(rows[0].avatar).toString("binary");
+  }
+
   setTimeout(() => {
     res.status(200).json({ DT: rows[0], EC: 0, EM: "Login successfully." });
   }, delay);
@@ -150,7 +157,8 @@ const getStation = async (req, res, next) => {
 };
 
 const putUpdateProfile = async (req, res, next) => {
-  let { account_id, email, username, birthday, phone, address } = req.body;
+  let { account_id, email, username, birthday, phone, address, avatar } =
+    req.body;
 
   let sql = "SELECT email,username FROM `account` where account_id = ?";
   let [rows] = await connection.execute(sql, [account_id]);
@@ -180,13 +188,14 @@ const putUpdateProfile = async (req, res, next) => {
   }
 
   sql =
-    "UPDATE `account` SET email = ?, username = ?, birthday = ?, phone = ?, address = ? WHERE account_id = ?";
+    "UPDATE `account` SET email = ?, username = ?, birthday = ?, phone = ?, address = ?, avatar = ? WHERE account_id = ?";
   rows = await connection.execute(sql, [
     email,
     username,
     birthday,
     phone,
     address,
+    avatar,
     account_id,
   ]);
   if (rows.length === 0) {
@@ -194,10 +203,17 @@ const putUpdateProfile = async (req, res, next) => {
   }
 
   sql =
-    "SELECT email,username,birthday,phone,address FROM `account` where account_id = ?";
+    "SELECT email,username,birthday,phone,address,avatar FROM `account` where account_id = ?";
   [rows] = await connection.execute(sql, [account_id]);
 
-  rows[0].birthday = moment(rows[0].birthday).format("YYYY-MM-DD");
+  if (rows[0].birthday) {
+    rows[0].birthday = moment(rows[0].birthday).format("YYYY-MM-DD");
+  }
+
+  if (rows[0].avatar) {
+    rows[0].avatar = Buffer.from(rows[0].avatar).toString("binary");
+  }
+
   res.status(200).json({ DT: rows[0], EC: 0, EM: "Update successfully." });
 };
 
@@ -217,13 +233,11 @@ const putResetPassword = async (req, res, next) => {
     throw new AppError(UPDATE_FAIL, "Something went wrong.", 200);
   }
 
-  res
-    .status(200)
-    .json({
-      DT: { password: newPassword },
-      EC: 0,
-      EM: "Update password successfully.",
-    });
+  res.status(200).json({
+    DT: { password: newPassword },
+    EC: 0,
+    EM: "Update password successfully.",
+  });
 };
 
 module.exports = {
