@@ -1,6 +1,6 @@
 import connection from "../config/connectDB";
 import _ from "lodash";
-import { FETCHING_FAIL, RECORD_NOTFOUND } from "../utils/errorCodes";
+import { RECORD_NOTFOUND } from "../utils/errorCodes";
 import AppError from "../custom/AppError";
 
 // api used to test set up
@@ -80,7 +80,7 @@ const getStation = async (req, res, next) => {
 
   const [rows] = await connection.execute(sql);
   if (rows.length === 0) {
-    throw new AppError(FETCHING_FAIL, "Fetching data failed", 200);
+    throw new AppError(RECORD_NOTFOUND, "No records were found.", 200);
   }
 
   res
@@ -89,7 +89,9 @@ const getStation = async (req, res, next) => {
 };
 
 const getAllFAQ = async (req, res, next) => {
-  const [rows] = await connection.execute("SELECT * FROM `faq`");
+  const [rows] = await connection.execute(
+    "SELECT * FROM `faq` where deleted = false"
+  );
 
   if (rows.length === 0) {
     throw new AppError(RECORD_NOTFOUND, "No records were found.", 200);

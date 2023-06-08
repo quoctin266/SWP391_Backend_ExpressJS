@@ -15,6 +15,7 @@ import {
   putUpdateProfile,
   putResetPassword,
 } from "../controllers/authController";
+import { getAllService } from "../controllers/serviceController";
 import tryCatch from "../utils/tryCatch";
 
 const router = express.Router();
@@ -41,5 +42,6 @@ router.get("/api/v1/station", tryCatch(getStation));
 router.put("/api/v1/update-profile", tryCatch(putUpdateProfile));
 router.put("/api/v1/reset-password", tryCatch(putResetPassword));
 router.get("/api/v1/faq", tryCatch(getAllFAQ));
+router.get("/api/v1/service", tryCatch(getAllService));
 
 module.exports = router;
