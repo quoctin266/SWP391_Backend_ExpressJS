@@ -6,12 +6,15 @@ import {
   getAllNews,
   getAllServicesIntro,
   getAllShippingCondition,
+  getStation,
+  getAllFAQ,
+} from "../controllers/homeController";
+import {
   postLogin,
   postSignup,
-  getStation,
   putUpdateProfile,
   putResetPassword,
-} from "../controllers/homeController";
+} from "../controllers/authController";
 import tryCatch from "../utils/tryCatch";
 
 const router = express.Router();
@@ -37,5 +40,6 @@ router.post("/api/v1/register", tryCatch(postSignup));
 router.get("/api/v1/station", tryCatch(getStation));
 router.put("/api/v1/update-profile", tryCatch(putUpdateProfile));
 router.put("/api/v1/reset-password", tryCatch(putResetPassword));
+router.get("/api/v1/faq", tryCatch(getAllFAQ));
 
 module.exports = router;
