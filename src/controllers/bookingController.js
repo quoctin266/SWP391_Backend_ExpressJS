@@ -1,12 +1,16 @@
 import connection from "../config/connectDB";
 import _ from "lodash";
-import { RECORD_NOTFOUND } from "../utils/errorCodes";
+import { RECORD_NOTFOUND, NO_ROUTE } from "../utils/errorCodes";
 import AppError from "../custom/AppError";
 import moment from "moment";
 
 const getTotalCost = async (req, res, next) => {
   let { birdList, packageID, distance } = req.body;
   let pricingResult;
+
+  if (!distance) {
+    throw new AppError(NO_ROUTE, "No current route were found.", 200);
+  }
 
   const [pricing] = await connection.execute(
     "SELECT * FROM `price` WHERE ? >= min_distance and ? < max_distance and deleted = false",
@@ -50,7 +54,7 @@ const getTotalCost = async (req, res, next) => {
 };
 
 const postNewOrder = async (req, res, next) => {
-  let { customerInfo, birdList, generalInfo, distance } = req.body;
+  let { customerInfo, birdList, generalInfo, totalCost } = req.body;
 
   const [customer] = await connection.execute(
     "SELECT * FROM `customer` WHERE account_id = ?",
@@ -70,39 +74,19 @@ const postNewOrder = async (req, res, next) => {
       ]
     );
     customerID = result.insertId;
-  } else customerID = customer[0].customer_id;
-
-  let pricingResult;
-  const [pricing] = await connection.execute(
-    "SELECT * FROM `price` WHERE ? > min_distance and ? < max_distance and deleted = false",
-    [distance, distance]
-  );
-  if (pricing.length !== 0) {
-    pricingResult = pricing[0];
   } else {
-    const [lastRow] = await connection.execute(
-      "SELECT * FROM `price` WHERE max_distance is null and deleted = false"
+    customerID = customer[0].customer_id;
+    await connection.execute(
+      "UPDATE `customer` SET email = ?, full_name = ?, phone_number = ?, address = ? WHERE customer_id = ?",
+      [
+        customerInfo.email,
+        customerInfo.name,
+        customerInfo.phone,
+        customerInfo.address,
+        customerID,
+      ]
     );
-    pricingResult = lastRow[0];
   }
-
-  let totalCost =
-    pricingResult.initial_cost +
-    pricingResult.additional_bird_cost * (birdList.length - 1);
-
-  for (const bird of birdList) {
-    const [capacityRow] = await connection.execute(
-      "SELECT capacity_unit FROM `bird_cage` where cage_id = ? and deleted = false",
-      [bird.cage]
-    );
-    totalCost += capacityRow[0].capacity_unit * pricingResult.unit_cost;
-  }
-
-  const [packageRow] = await connection.execute(
-    "SELECT price FROM `service_package` WHERE package_id = ? and deleted = false",
-    [generalInfo.packageID]
-  );
-  totalCost += packageRow[0].price;
 
   let currentTime = moment().format("YYYY-MM-DD HH:mm:ss").toString();
 
@@ -139,6 +123,11 @@ const postNewOrder = async (req, res, next) => {
       ]
     );
   }
+
+  await connection.execute(
+    "INSERT INTO `transport_status` (order_status,date,order_id) VALUES (?, ?, ?)",
+    ["Your order is being processed", currentTime, orderID]
+  );
 
   res.status(200).json({
     DT: {

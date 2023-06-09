@@ -23,6 +23,8 @@ import {
   postNewOrder,
   getTotalCost,
 } from "../controllers/bookingController";
+import { getTransportStatus } from "../controllers/trackingController";
+import { getPricing } from "../controllers/priceController";
 import tryCatch from "../utils/tryCatch";
 
 const router = express.Router();
@@ -55,5 +57,7 @@ router.get("/api/v1/package", tryCatch(getAllPackage));
 router.get("/api/v1/payment", tryCatch(getAllPayment));
 router.post("/api/v1/create-order", tryCatch(postNewOrder));
 router.post("/api/v1/total-cost", tryCatch(getTotalCost));
+router.get("/api/v1/transport-status/:orderID", tryCatch(getTransportStatus));
+router.get("/api/v1/price", tryCatch(getPricing));
 
 module.exports = router;
