@@ -103,7 +103,7 @@ const putUpdateProfile = async (req, res, next) => {
 
   sql =
     "UPDATE `account` SET email = ?, username = ?, birthday = ?, phone = ?, address = ?, avatar = ? WHERE account_id = ?";
-  rows = await connection.execute(sql, [
+  await connection.execute(sql, [
     email,
     username,
     birthday,
@@ -112,9 +112,6 @@ const putUpdateProfile = async (req, res, next) => {
     avatar,
     account_id,
   ]);
-  if (rows.length === 0) {
-    throw new AppError(UPDATE_FAIL, "Something went wrong.", 200);
-  }
 
   sql =
     "SELECT email,username,birthday,phone,address,avatar FROM `account` where account_id = ?";
@@ -141,11 +138,7 @@ const putResetPassword = async (req, res, next) => {
   }
 
   sql = "UPDATE `account` SET password = ? WHERE account_id = ?";
-  [rows] = await connection.execute(sql, [newPassword, account_id]);
-
-  if (rows.length === 0) {
-    throw new AppError(UPDATE_FAIL, "Something went wrong.", 200);
-  }
+  await connection.execute(sql, [newPassword, account_id]);
 
   res.status(200).json({
     DT: { password: newPassword },

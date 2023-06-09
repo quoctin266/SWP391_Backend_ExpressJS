@@ -6,3 +6,4 @@ export const FETCHING_FAIL = 104;
 export const UPDATE_FAIL = 105;
 export const WRONG_PASSWORD = 106;
 export const RECORD_NOTFOUND = 107;
+export const NO_ROUTE = 108;
