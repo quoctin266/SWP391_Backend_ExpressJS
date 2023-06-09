@@ -16,6 +16,13 @@ import {
   putResetPassword,
 } from "../controllers/authController";
 import { getAllService } from "../controllers/serviceController";
+import {
+  getAllCage,
+  getAllPackage,
+  getAllPayment,
+  postNewOrder,
+  getTotalCost,
+} from "../controllers/bookingController";
 import tryCatch from "../utils/tryCatch";
 
 const router = express.Router();
@@ -43,5 +50,10 @@ router.put("/api/v1/update-profile", tryCatch(putUpdateProfile));
 router.put("/api/v1/reset-password", tryCatch(putResetPassword));
 router.get("/api/v1/faq", tryCatch(getAllFAQ));
 router.get("/api/v1/service", tryCatch(getAllService));
+router.get("/api/v1/cage", tryCatch(getAllCage));
+router.get("/api/v1/package", tryCatch(getAllPackage));
+router.get("/api/v1/payment", tryCatch(getAllPayment));
+router.post("/api/v1/create-order", tryCatch(postNewOrder));
+router.post("/api/v1/total-cost", tryCatch(getTotalCost));
 
 module.exports = router;

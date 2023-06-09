@@ -24,14 +24,6 @@ const getAllService = async (req, res, next) => {
     })
     .value();
 
-  //   resData.forEach((item) => {
-  //     item.description.forEach(des => {
-  //         if (des.main_title) {
-
-  //         }
-  //     })
-  //   });
-
   res.status(200).json({
     DT: resData,
     EC: 0,
