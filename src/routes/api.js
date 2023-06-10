@@ -25,6 +25,15 @@ import {
 } from "../controllers/bookingController";
 import { getTransportStatus } from "../controllers/trackingController";
 import { getPricing } from "../controllers/priceController";
+import {
+  getOrderList,
+  getCustomer,
+  getBirdList,
+  putUpdateOrderStatus,
+  postCreateTransportStatus,
+  deleteTransportStatus,
+  putUpdateTransportStatus,
+} from "../controllers/orderController";
 import tryCatch from "../utils/tryCatch";
 
 const router = express.Router();
@@ -59,5 +68,21 @@ router.post("/api/v1/create-order", tryCatch(postNewOrder));
 router.post("/api/v1/total-cost", tryCatch(getTotalCost));
 router.get("/api/v1/transport-status/:orderID", tryCatch(getTransportStatus));
 router.get("/api/v1/price", tryCatch(getPricing));
+router.get("/api/v1/list-order/:status", tryCatch(getOrderList));
+router.get("/api/v1/customer/:orderID", tryCatch(getCustomer));
+router.get("/api/v1/bird/:orderID", tryCatch(getBirdList));
+router.put("/api/v1/update-order-status", tryCatch(putUpdateOrderStatus));
+router.post(
+  "/api/v1/create-transport-status",
+  tryCatch(postCreateTransportStatus)
+);
+router.delete(
+  "/api/v1/delete-order-status/:id",
+  tryCatch(deleteTransportStatus)
+);
+router.put(
+  "/api/v1/update-transport-status",
+  tryCatch(putUpdateTransportStatus)
+);
 
 module.exports = router;
