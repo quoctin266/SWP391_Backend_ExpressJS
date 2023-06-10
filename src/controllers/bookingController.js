@@ -126,7 +126,7 @@ const postNewOrder = async (req, res, next) => {
 
   await connection.execute(
     "INSERT INTO `transport_status` (order_status,date,order_id) VALUES (?, ?, ?)",
-    ["Your order is being processed", currentTime, orderID]
+    ["Order is being processed", currentTime, orderID]
   );
 
   res.status(200).json({
