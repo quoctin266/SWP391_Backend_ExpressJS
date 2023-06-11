@@ -34,6 +34,22 @@ import {
   deleteTransportStatus,
   putUpdateTransportStatus,
 } from "../controllers/orderController";
+import {
+  getAllRoute,
+  getRouteDetail,
+  getTripList,
+  getVehicle,
+  getDriverList,
+  getProgressList,
+  postCreateProgress,
+  deleteProgress,
+  putUpdateProgess,
+  getOrderCapacity,
+  putUpdateTripStatus,
+  putRemoveOrder,
+  getPendingOrder,
+  putAssignOrder,
+} from "../controllers/scheduleController";
 import tryCatch from "../utils/tryCatch";
 
 const router = express.Router();
@@ -66,8 +82,10 @@ router.get("/api/v1/package", tryCatch(getAllPackage));
 router.get("/api/v1/payment", tryCatch(getAllPayment));
 router.post("/api/v1/create-order", tryCatch(postNewOrder));
 router.post("/api/v1/total-cost", tryCatch(getTotalCost));
+
 router.get("/api/v1/transport-status/:orderID", tryCatch(getTransportStatus));
 router.get("/api/v1/price", tryCatch(getPricing));
+
 router.get("/api/v1/list-order/:status", tryCatch(getOrderList));
 router.get("/api/v1/customer/:orderID", tryCatch(getCustomer));
 router.get("/api/v1/bird/:orderID", tryCatch(getBirdList));
@@ -84,5 +102,20 @@ router.put(
   "/api/v1/update-transport-status",
   tryCatch(putUpdateTransportStatus)
 );
+
+router.get("/api/v1/all-route", tryCatch(getAllRoute));
+router.get("/api/v1/route/:routeID", tryCatch(getRouteDetail));
+router.get("/api/v1/trips/:routeID", tryCatch(getTripList));
+router.get("/api/v1/vehicle/:vehicleID", tryCatch(getVehicle));
+router.get("/api/v1/drivers/:tripID", tryCatch(getDriverList));
+router.get("/api/v1/progress/:tripID", tryCatch(getProgressList));
+router.post("/api/v1/create-progress", tryCatch(postCreateProgress));
+router.delete("/api/v1/delete-progress/:progressID", tryCatch(deleteProgress));
+router.put("/api/v1/update-progress", tryCatch(putUpdateProgess));
+router.get("/api/v1/order/:tripID", tryCatch(getOrderCapacity));
+router.put("/api/v1/update-trip-status", tryCatch(putUpdateTripStatus));
+router.put("/api/v1/remove-order", tryCatch(putRemoveOrder));
+router.get("/api/v1/pending-order", tryCatch(getPendingOrder));
+router.put("/api/v1/assign-order", tryCatch(putAssignOrder));
 
 module.exports = router;
