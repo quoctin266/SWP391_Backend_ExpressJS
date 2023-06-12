@@ -22,6 +22,7 @@ import {
   getAllPayment,
   postNewOrder,
   getTotalCost,
+  getCustomerByAccount,
 } from "../controllers/bookingController";
 import { getTransportStatus } from "../controllers/trackingController";
 import { getPricing } from "../controllers/priceController";
@@ -83,6 +84,7 @@ router.get("/api/v1/package", tryCatch(getAllPackage));
 router.get("/api/v1/payment", tryCatch(getAllPayment));
 router.post("/api/v1/create-order", tryCatch(postNewOrder));
 router.post("/api/v1/total-cost", tryCatch(getTotalCost));
+router.get("/api/v1/customers/:accountID", tryCatch(getCustomerByAccount));
 
 router.get("/api/v1/transport-status/:orderID", tryCatch(getTransportStatus));
 router.get("/api/v1/price", tryCatch(getPricing));

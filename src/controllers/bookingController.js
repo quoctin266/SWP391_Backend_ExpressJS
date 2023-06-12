@@ -4,6 +4,25 @@ import { RECORD_NOTFOUND, NO_ROUTE } from "../utils/errorCodes";
 import AppError from "../custom/AppError";
 import moment from "moment";
 
+const getCustomerByAccount = async (req, res, next) => {
+  let accountID = req.params.accountID;
+
+  const [rows] = await connection.execute(
+    "SELECT * FROM `customer` where account_id = ?",
+    [accountID]
+  );
+
+  if (rows.length === 0) {
+    throw new AppError(RECORD_NOTFOUND, "No records were found.", 200);
+  }
+
+  res.status(200).json({
+    DT: rows,
+    EC: 0,
+    EM: "Fetch list successfully.",
+  });
+};
+
 const getTotalCost = async (req, res, next) => {
   let { birdList, packageID, distance } = req.body;
   let pricingResult;
@@ -194,4 +213,5 @@ module.exports = {
   getAllPackage,
   getAllPayment,
   getTotalCost,
+  getCustomerByAccount,
 };
