@@ -33,6 +33,7 @@ import {
   postCreateTransportStatus,
   deleteTransportStatus,
   putUpdateTransportStatus,
+  getOrderByTrip,
 } from "../controllers/orderController";
 import {
   getAllRoute,
@@ -117,5 +118,6 @@ router.put("/api/v1/update-trip-status", tryCatch(putUpdateTripStatus));
 router.put("/api/v1/remove-order", tryCatch(putRemoveOrder));
 router.get("/api/v1/pending-order", tryCatch(getPendingOrder));
 router.put("/api/v1/assign-order", tryCatch(putAssignOrder));
+router.get("/api/v1/order-by-trip/:tripID", tryCatch(getOrderByTrip));
 
 module.exports = router;
