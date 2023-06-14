@@ -62,7 +62,13 @@ const postSignup = async (req, res, next) => {
   }
 
   sql = "INSERT INTO `account` (email, username, password) VALUES (?, ?, ?)";
-  rows = await connection.execute(sql, [email, username, password]);
+  [rows] = await connection.execute(sql, [email, username, password]);
+
+  const [defaultCustomer] = await connection.execute(
+    "INSERT INTO `customer` (full_name, account_id)  VALUES (?, ?)",
+    [username, rows.insertId]
+  );
+
   if (rows.length === 0) {
     throw new AppError(REGISTER_FAIL, "Something went wrong.", 200);
   }

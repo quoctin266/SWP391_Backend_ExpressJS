@@ -22,6 +22,7 @@ import {
   getAllPayment,
   postNewOrder,
   getTotalCost,
+  getCustomerByAccount,
 } from "../controllers/bookingController";
 import { getTransportStatus } from "../controllers/trackingController";
 import { getPricing } from "../controllers/priceController";
@@ -51,6 +52,15 @@ import {
   getPendingOrder,
   putAssignOrder,
 } from "../controllers/scheduleController";
+import {
+  postCreateRoute,
+  putUpdateRoute,
+} from "../controllers/routeController";
+import {
+  getAllVehicle,
+  getAllDriver,
+  postCreateTrip,
+} from "../controllers/tripController";
 import tryCatch from "../utils/tryCatch";
 
 const router = express.Router();
@@ -83,6 +93,7 @@ router.get("/api/v1/package", tryCatch(getAllPackage));
 router.get("/api/v1/payment", tryCatch(getAllPayment));
 router.post("/api/v1/create-order", tryCatch(postNewOrder));
 router.post("/api/v1/total-cost", tryCatch(getTotalCost));
+router.get("/api/v1/customers/:accountID", tryCatch(getCustomerByAccount));
 
 router.get("/api/v1/transport-status/:orderID", tryCatch(getTransportStatus));
 router.get("/api/v1/price", tryCatch(getPricing));
@@ -119,5 +130,12 @@ router.put("/api/v1/remove-order", tryCatch(putRemoveOrder));
 router.get("/api/v1/pending-order", tryCatch(getPendingOrder));
 router.put("/api/v1/assign-order", tryCatch(putAssignOrder));
 router.get("/api/v1/order-by-trip/:tripID", tryCatch(getOrderByTrip));
+
+router.post("/api/v1/create-route", tryCatch(postCreateRoute));
+router.put("/api/v1/update-route", tryCatch(putUpdateRoute));
+
+router.get("/api/v1/allvehicle", tryCatch(getAllVehicle));
+router.get("/api/v1/alldriver", tryCatch(getAllDriver));
+router.post("/api/v1/create-trip", tryCatch(postCreateTrip));
 
 module.exports = router;

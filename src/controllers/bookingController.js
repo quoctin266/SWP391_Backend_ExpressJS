@@ -4,6 +4,25 @@ import { RECORD_NOTFOUND, NO_ROUTE } from "../utils/errorCodes";
 import AppError from "../custom/AppError";
 import moment from "moment";
 
+const getCustomerByAccount = async (req, res, next) => {
+  let accountID = req.params.accountID;
+
+  const [rows] = await connection.execute(
+    "SELECT * FROM `customer` where account_id = ?",
+    [accountID]
+  );
+
+  if (rows.length === 0) {
+    throw new AppError(RECORD_NOTFOUND, "No records were found.", 200);
+  }
+
+  res.status(200).json({
+    DT: rows,
+    EC: 0,
+    EM: "Fetch list successfully.",
+  });
+};
+
 const getTotalCost = async (req, res, next) => {
   let { birdList, packageID, distance } = req.body;
   let pricingResult;
@@ -54,39 +73,7 @@ const getTotalCost = async (req, res, next) => {
 };
 
 const postNewOrder = async (req, res, next) => {
-  let { customerInfo, birdList, generalInfo, totalCost } = req.body;
-
-  const [customer] = await connection.execute(
-    "SELECT * FROM `customer` WHERE account_id = ?",
-    [customerInfo.accountID]
-  );
-
-  let customerID;
-  if (customer.length === 0) {
-    const [result] = await connection.execute(
-      "INSERT INTO `customer` (full_name,address,email,phone_number, account_id) VALUES (?, ?, ?, ?, ?)",
-      [
-        customerInfo.name,
-        customerInfo.address,
-        customerInfo.email,
-        customerInfo.phone,
-        customerInfo.accountID,
-      ]
-    );
-    customerID = result.insertId;
-  } else {
-    customerID = customer[0].customer_id;
-    await connection.execute(
-      "UPDATE `customer` SET email = ?, full_name = ?, phone_number = ?, address = ? WHERE customer_id = ?",
-      [
-        customerInfo.email,
-        customerInfo.name,
-        customerInfo.phone,
-        customerInfo.address,
-        customerID,
-      ]
-    );
-  }
+  let { customerID, birdList, generalInfo, totalCost } = req.body;
 
   let currentTime = moment().format("YYYY-MM-DD HH:mm:ss").toString();
 
@@ -194,4 +181,5 @@ module.exports = {
   getAllPackage,
   getAllPayment,
   getTotalCost,
+  getCustomerByAccount,
 };

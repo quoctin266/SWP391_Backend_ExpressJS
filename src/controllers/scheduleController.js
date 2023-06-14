@@ -19,7 +19,7 @@ const getRouteDetail = async (req, res, next) => {
   let routeID = req.params.routeID;
 
   const [rows] = await connection.execute(
-    "SELECT station.station_id, station.name, route_station.station_index, route_station.driving_time, route_station.distance FROM `route_station` JOIN `station` on route_station.station_id = station.station_id WHERE route_station.route_id = ? and station.deleted = false",
+    "SELECT station.station_id, station.name, route_station.station_index, route_station.driving_time, route_station.preDrivingTime, route_station.preDistance, route_station.distance FROM `route_station` JOIN `station` on route_station.station_id = station.station_id WHERE route_station.route_id = ? and station.deleted = false",
     [routeID]
   );
 
@@ -165,13 +165,13 @@ const getOrderCapacity = async (req, res, next) => {
       [row.order_id]
     );
     row.total_capacity = result[0].total_capacity;
-    row.anticipate_date = moment(row.date)
+    row.anticipate_date = moment(row.anticipate_date)
+      .format("DD-MM-YYYY")
+      .toString();
+    row.created_time = moment(row.created_time)
       .format("DD-MM-YYYY HH:mm:ss")
       .toString();
-    row.created_time = moment(row.date)
-      .format("DD-MM-YYYY HH:mm:ss")
-      .toString();
-    row.estimated_arrival = moment(row.date)
+    row.estimated_arrival = moment(row.estimated_arrival)
       .format("DD-MM-YYYY HH:mm:ss")
       .toString();
   }
@@ -221,13 +221,13 @@ const getPendingOrder = async (req, res, next) => {
       [row.order_id]
     );
     row.total_capacity = result[0].total_capacity;
-    row.anticipate_date = moment(row.date)
+    row.anticipate_date = moment(row.anticipate_date)
+      .format("DD-MM-YYYY")
+      .toString();
+    row.created_time = moment(row.created_time)
       .format("DD-MM-YYYY HH:mm:ss")
       .toString();
-    row.created_time = moment(row.date)
-      .format("DD-MM-YYYY HH:mm:ss")
-      .toString();
-    row.estimated_arrival = moment(row.date)
+    row.estimated_arrival = moment(row.estimated_arrival)
       .format("DD-MM-YYYY HH:mm:ss")
       .toString();
   }
