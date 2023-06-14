@@ -28,6 +28,42 @@ const postCreateRoute = async (req, res, next) => {
   res.status(200).json({ DT: null, EC: 0, EM: "Create route successfully." });
 };
 
+const putUpdateRoute = async (req, res, next) => {
+  let { routeDetail, description, routeID } = req.body;
+
+  await connection.execute("DELETE FROM `route_station` WHERE route_id = ?", [
+    routeID,
+  ]);
+
+  for (const station of routeDetail) {
+    await connection.execute(
+      "INSERT INTO `route_station` (route_id, station_id, station_index, driving_time, preDrivingTime, distance, preDistance) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [
+        routeID,
+        station.station_id,
+        station.station_index,
+        station.driving_time,
+        station.preDrivingTime,
+        station.distance,
+        station.preDistance,
+      ]
+    );
+  }
+
+  await connection.execute(
+    "UPDATE `route` SET description = ?, departure = ?, destination = ? WHERE route_id = ?",
+    [
+      description,
+      routeDetail[0].name,
+      routeDetail[routeDetail.length - 1].name,
+      routeID,
+    ]
+  );
+
+  res.status(200).json({ DT: null, EC: 0, EM: "Update route successfully." });
+};
+
 module.exports = {
   postCreateRoute,
+  putUpdateRoute,
 };

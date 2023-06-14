@@ -52,7 +52,15 @@ import {
   getPendingOrder,
   putAssignOrder,
 } from "../controllers/scheduleController";
-import { postCreateRoute } from "../controllers/routeController";
+import {
+  postCreateRoute,
+  putUpdateRoute,
+} from "../controllers/routeController";
+import {
+  getAllVehicle,
+  getAllDriver,
+  postCreateTrip,
+} from "../controllers/tripController";
 import tryCatch from "../utils/tryCatch";
 
 const router = express.Router();
@@ -124,5 +132,10 @@ router.put("/api/v1/assign-order", tryCatch(putAssignOrder));
 router.get("/api/v1/order-by-trip/:tripID", tryCatch(getOrderByTrip));
 
 router.post("/api/v1/create-route", tryCatch(postCreateRoute));
+router.put("/api/v1/update-route", tryCatch(putUpdateRoute));
+
+router.get("/api/v1/allvehicle", tryCatch(getAllVehicle));
+router.get("/api/v1/alldriver", tryCatch(getAllDriver));
+router.post("/api/v1/create-trip", tryCatch(postCreateTrip));
 
 module.exports = router;
