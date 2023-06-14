@@ -73,39 +73,7 @@ const getTotalCost = async (req, res, next) => {
 };
 
 const postNewOrder = async (req, res, next) => {
-  let { customerInfo, birdList, generalInfo, totalCost } = req.body;
-
-  const [customer] = await connection.execute(
-    "SELECT * FROM `customer` WHERE account_id = ?",
-    [customerInfo.accountID]
-  );
-
-  let customerID;
-  if (customer.length === 0) {
-    const [result] = await connection.execute(
-      "INSERT INTO `customer` (full_name,address,email,phone_number, account_id) VALUES (?, ?, ?, ?, ?)",
-      [
-        customerInfo.name,
-        customerInfo.address,
-        customerInfo.email,
-        customerInfo.phone,
-        customerInfo.accountID,
-      ]
-    );
-    customerID = result.insertId;
-  } else {
-    customerID = customer[0].customer_id;
-    await connection.execute(
-      "UPDATE `customer` SET email = ?, full_name = ?, phone_number = ?, address = ? WHERE customer_id = ?",
-      [
-        customerInfo.email,
-        customerInfo.name,
-        customerInfo.phone,
-        customerInfo.address,
-        customerID,
-      ]
-    );
-  }
+  let { customerID, birdList, generalInfo, totalCost } = req.body;
 
   let currentTime = moment().format("YYYY-MM-DD HH:mm:ss").toString();
 

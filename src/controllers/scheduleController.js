@@ -19,7 +19,7 @@ const getRouteDetail = async (req, res, next) => {
   let routeID = req.params.routeID;
 
   const [rows] = await connection.execute(
-    "SELECT station.station_id, station.name, route_station.station_index, route_station.driving_time, route_station.distance FROM `route_station` JOIN `station` on route_station.station_id = station.station_id WHERE route_station.route_id = ? and station.deleted = false",
+    "SELECT station.station_id, station.name, route_station.station_index, route_station.driving_time, route_station.preDrivingTime, route_station.preDistance, route_station.distance FROM `route_station` JOIN `station` on route_station.station_id = station.station_id WHERE route_station.route_id = ? and station.deleted = false",
     [routeID]
   );
 

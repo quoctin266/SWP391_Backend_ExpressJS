@@ -28,7 +28,7 @@ const getCustomer = async (req, res, next) => {
   let orderID = req.params.orderID;
 
   const [rows] = await connection.execute(
-    "SELECT customer.customer_id, customer.full_name, customer.address, customer.email, customer.phone_number from `customer` join `transport_order` on customer.customer_id = transport_order.customer_id WHERE transport_order.order_id = ?",
+    "SELECT customer.customer_id, customer.full_name, customer.address, customer.phone_number from `customer` join `transport_order` on customer.customer_id = transport_order.customer_id WHERE transport_order.order_id = ?",
     [orderID]
   );
 

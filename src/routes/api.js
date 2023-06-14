@@ -52,6 +52,7 @@ import {
   getPendingOrder,
   putAssignOrder,
 } from "../controllers/scheduleController";
+import { postCreateRoute } from "../controllers/routeController";
 import tryCatch from "../utils/tryCatch";
 
 const router = express.Router();
@@ -121,5 +122,7 @@ router.put("/api/v1/remove-order", tryCatch(putRemoveOrder));
 router.get("/api/v1/pending-order", tryCatch(getPendingOrder));
 router.put("/api/v1/assign-order", tryCatch(putAssignOrder));
 router.get("/api/v1/order-by-trip/:tripID", tryCatch(getOrderByTrip));
+
+router.post("/api/v1/create-route", tryCatch(postCreateRoute));
 
 module.exports = router;
