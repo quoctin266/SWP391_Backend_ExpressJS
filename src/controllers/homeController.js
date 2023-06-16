@@ -104,6 +104,48 @@ const getAllFAQ = async (req, res, next) => {
   });
 };
 
+const getEstimateCost = async (req, res, next) => {
+  let { birdCount, distance } = req.body;
+  let pricingResult;
+
+  if (!distance) {
+    throw new AppError(NO_ROUTE, "No current route were found.", 200);
+  }
+
+  const [pricing] = await connection.execute(
+    "SELECT * FROM `price` WHERE ? >= min_distance and ? < max_distance and deleted = false",
+    [distance, distance]
+  );
+
+  if (pricing.length !== 0) {
+    pricingResult = pricing[0];
+  } else {
+    const [lastRow] = await connection.execute(
+      "SELECT * FROM `price` WHERE max_distance is null and deleted = false"
+    );
+    pricingResult = lastRow[0];
+  }
+
+  let totalCost =
+    pricingResult.initial_cost +
+    pricingResult.additional_bird_cost * (birdCount - 1) +
+    pricingResult.unit_cost * birdCount;
+
+  const [packageRow] = await connection.execute(
+    "SELECT price FROM `service_package` WHERE package_id = ? and deleted = false",
+    [1]
+  );
+  totalCost += packageRow[0].price;
+
+  res.status(200).json({
+    DT: {
+      totalCost: totalCost,
+    },
+    EC: 0,
+    EM: "Estimate cost successfully.",
+  });
+};
+
 module.exports = {
   getHomepage,
   getUsers,
@@ -113,4 +155,5 @@ module.exports = {
   getAllShippingCondition,
   getStation,
   getAllFAQ,
+  getEstimateCost,
 };
