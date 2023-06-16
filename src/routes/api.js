@@ -8,6 +8,7 @@ import {
   getAllShippingCondition,
   getStation,
   getAllFAQ,
+  getEstimateCost,
 } from "../controllers/homeController";
 import {
   postLogin,
@@ -137,5 +138,6 @@ router.put("/api/v1/update-route", tryCatch(putUpdateRoute));
 router.get("/api/v1/allvehicle", tryCatch(getAllVehicle));
 router.get("/api/v1/alldriver", tryCatch(getAllDriver));
 router.post("/api/v1/create-trip", tryCatch(postCreateTrip));
+router.post("/api/v1/estimate-cost", tryCatch(getEstimateCost));
 
 module.exports = router;

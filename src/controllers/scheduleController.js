@@ -164,7 +164,7 @@ const getOrderCapacity = async (req, res, next) => {
       "SELECT SUM(bird_cage.capacity_unit) as total_capacity FROM `order_detail` JOIN `bird_cage` on order_detail.cage_id = bird_cage.cage_id WHERE order_id = ?",
       [row.order_id]
     );
-    row.total_capacity = result[0].total_capacity;
+    row.total_capacity = +result[0].total_capacity;
     row.anticipate_date = moment(row.anticipate_date)
       .format("DD-MM-YYYY")
       .toString();
@@ -220,7 +220,7 @@ const getPendingOrder = async (req, res, next) => {
       "SELECT SUM(bird_cage.capacity_unit) as total_capacity FROM `order_detail` JOIN `bird_cage` on order_detail.cage_id = bird_cage.cage_id WHERE order_id = ?",
       [row.order_id]
     );
-    row.total_capacity = result[0].total_capacity;
+    row.total_capacity = +result[0].total_capacity;
     row.anticipate_date = moment(row.anticipate_date)
       .format("DD-MM-YYYY")
       .toString();
@@ -236,12 +236,14 @@ const getPendingOrder = async (req, res, next) => {
 };
 
 const putAssignOrder = async (req, res, next) => {
-  let { orderID, tripID } = req.body;
+  let { orderList, tripID } = req.body;
 
-  await connection.execute(
-    "UPDATE `transport_order` SET trip_id = ?, status = ? WHERE order_id  = ?",
-    [tripID, "Delivering", orderID]
-  );
+  for (const order of orderList) {
+    await connection.execute(
+      "UPDATE `transport_order` SET trip_id = ?, status = ? WHERE order_id  = ?",
+      [tripID, "Delivering", order.order_id]
+    );
+  }
 
   res.status(200).json({ DT: null, EC: 0, EM: "Assign order successfully." });
 };
