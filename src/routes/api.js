@@ -9,12 +9,15 @@ import {
   getStation,
   getAllFAQ,
   getEstimateCost,
+  postCreateFeedback,
+  getAllFeedback,
 } from "../controllers/homeController";
 import {
   postLogin,
   postSignup,
   putUpdateProfile,
   putResetPassword,
+  postCreateSender,
 } from "../controllers/authController";
 import { getAllService } from "../controllers/serviceController";
 import {
@@ -26,7 +29,18 @@ import {
   getCustomerByAccount,
 } from "../controllers/bookingController";
 import { getTransportStatus } from "../controllers/trackingController";
-import { getPricing } from "../controllers/priceController";
+import {
+  getPricing,
+  postCreatePayment,
+  putUpdatePayment,
+  deletePayment,
+  postCreatePrice,
+  putUpdatePrice,
+  deletePrice,
+  postCreatePackage,
+  putUpdatePackage,
+  deletePackage,
+} from "../controllers/priceController";
 import {
   getOrderList,
   getCustomer,
@@ -61,6 +75,10 @@ import {
   getAllVehicle,
   getAllDriver,
   postCreateTrip,
+  postCreateVehicle,
+  putUpdateVehicle,
+  deleteVehicle,
+  postCreateStation,
 } from "../controllers/tripController";
 import tryCatch from "../utils/tryCatch";
 
@@ -82,13 +100,18 @@ router.post("/api/v1/create-user", postNewUser);
 router.get("/api/v1/news", getAllNews);
 router.get("/api/v1/services-intro", getAllServicesIntro);
 router.get("/api/v1/shipping-condition", getAllShippingCondition);
+router.post("/api/v1/create-feedback", tryCatch(postCreateFeedback));
+
 router.post("/api/v1/login", tryCatch(postLogin));
 router.post("/api/v1/register", tryCatch(postSignup));
+router.post("/api/v1/sender", tryCatch(postCreateSender));
 router.get("/api/v1/station", tryCatch(getStation));
 router.put("/api/v1/update-profile", tryCatch(putUpdateProfile));
 router.put("/api/v1/reset-password", tryCatch(putResetPassword));
+
 router.get("/api/v1/faq", tryCatch(getAllFAQ));
 router.get("/api/v1/service", tryCatch(getAllService));
+
 router.get("/api/v1/cage", tryCatch(getAllCage));
 router.get("/api/v1/package", tryCatch(getAllPackage));
 router.get("/api/v1/payment", tryCatch(getAllPayment));
@@ -131,6 +154,7 @@ router.put("/api/v1/remove-order", tryCatch(putRemoveOrder));
 router.get("/api/v1/pending-order", tryCatch(getPendingOrder));
 router.put("/api/v1/assign-order", tryCatch(putAssignOrder));
 router.get("/api/v1/order-by-trip/:tripID", tryCatch(getOrderByTrip));
+router.get("/api/v1/all-feedback", tryCatch(getAllFeedback));
 
 router.post("/api/v1/create-route", tryCatch(postCreateRoute));
 router.put("/api/v1/update-route", tryCatch(putUpdateRoute));
@@ -139,5 +163,20 @@ router.get("/api/v1/allvehicle", tryCatch(getAllVehicle));
 router.get("/api/v1/alldriver", tryCatch(getAllDriver));
 router.post("/api/v1/create-trip", tryCatch(postCreateTrip));
 router.post("/api/v1/estimate-cost", tryCatch(getEstimateCost));
+
+router.post("/api/v1/create-payment", tryCatch(postCreatePayment));
+router.get("/api/v1/all-payment", tryCatch(getAllPayment));
+router.put("/api/v1/update-payment", tryCatch(putUpdatePayment));
+router.delete("/api/v1/delete-payment/:id", tryCatch(deletePayment));
+router.post("/api/v1/create-price", tryCatch(postCreatePrice));
+router.put("/api/v1/update-price", tryCatch(putUpdatePrice));
+router.delete("/api/v1/delete-price/:id", tryCatch(deletePrice));
+router.post("/api/v1/create-package", tryCatch(postCreatePackage));
+router.put("/api/v1/update-package", tryCatch(putUpdatePackage));
+router.delete("/api/v1/delete-package/:id", tryCatch(deletePackage));
+router.post("/api/v1/create-vehicle", tryCatch(postCreateVehicle));
+router.put("/api/v1/update-vehicle", tryCatch(putUpdateVehicle));
+router.delete("/api/v1/delete-vehicle/:id", tryCatch(deleteVehicle));
+router.post("/api/v1/create-station", tryCatch(postCreateStation));
 
 module.exports = router;
