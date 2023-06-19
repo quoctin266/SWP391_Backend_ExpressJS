@@ -2,6 +2,7 @@ import connection from "../config/connectDB";
 import _ from "lodash";
 import { RECORD_NOTFOUND } from "../utils/errorCodes";
 import AppError from "../custom/AppError";
+import moment from "moment";
 
 // api used to test set up
 const getHomepage = (req, res) => {
@@ -76,7 +77,7 @@ const getAllShippingCondition = async (req, res) => {
 };
 
 const getStation = async (req, res, next) => {
-  let sql = "SELECT station_id, name FROM `station` where deleted = false";
+  let sql = "SELECT * FROM `station` where deleted = false";
 
   const [rows] = await connection.execute(sql);
   if (rows.length === 0) {
@@ -146,6 +147,43 @@ const getEstimateCost = async (req, res, next) => {
   });
 };
 
+const postCreateFeedback = async (req, res, next) => {
+  let { accountID, title, description, createTime } = req.body;
+  let sql =
+    "INSERT INTO `feedback` (title, description, created_time, account_id) VALUES (?, ?, ?, ?)";
+
+  await connection.execute(sql, [title, description, createTime, accountID]);
+
+  res
+    .status(200)
+    .json({ DT: null, EC: 0, EM: "Feedback created successfully." });
+};
+
+const getAllFeedback = async (req, res, next) => {
+  const [rows] = await connection.execute(
+    "SELECT * FROM `feedback` JOIN account ON feedback.account_id = account.account_id where deleted = false"
+  );
+
+  if (rows.length === 0) {
+    throw new AppError(RECORD_NOTFOUND, "No records were found.", 200);
+  }
+
+  rows.forEach((row) => {
+    row.created_time = moment(row.created_time)
+      .format("DD-MM-YYYY HH:mm")
+      .toString();
+    if (row.avatar) {
+      row.avatar = Buffer.from(row.avatar).toString("binary");
+    }
+  });
+
+  res.status(200).json({
+    DT: rows,
+    EC: 0,
+    EM: "Fetch feedback successfully.",
+  });
+};
+
 module.exports = {
   getHomepage,
   getUsers,
@@ -156,4 +194,6 @@ module.exports = {
   getStation,
   getAllFAQ,
   getEstimateCost,
+  postCreateFeedback,
+  getAllFeedback,
 };

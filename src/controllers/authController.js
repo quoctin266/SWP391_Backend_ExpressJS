@@ -153,9 +153,20 @@ const putResetPassword = async (req, res, next) => {
   });
 };
 
+const postCreateSender = async (req, res, next) => {
+  let { accountID, name, address, phone } = req.body;
+  let sql =
+    "INSERT INTO `customer` (full_name, address, phone_number, account_id) VALUES (?, ?, ?, ?)";
+
+  await connection.execute(sql, [name, address, phone, accountID]);
+
+  res.status(200).json({ DT: null, EC: 0, EM: "Sender created successfully." });
+};
+
 module.exports = {
   postLogin,
   postSignup,
   putUpdateProfile,
   putResetPassword,
+  postCreateSender,
 };
