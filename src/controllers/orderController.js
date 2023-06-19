@@ -1,6 +1,7 @@
 import connection from "../config/connectDB";
 import { RECORD_NOTFOUND } from "../utils/errorCodes";
 import AppError from "../custom/AppError";
+import moment from "moment";
 
 const getOrderList = async (req, res, next) => {
   let status = req.params.status;
@@ -130,7 +131,33 @@ const getOrderByCustomer = async (req, res, next) => {
     throw new AppError(RECORD_NOTFOUND, "No records were found.", 200);
   }
 
+  rows.forEach((row) => {
+    row.created_time = moment(row.created_time)
+      .format("DD-MM-YYYY HH:mm")
+      .toString();
+    row.estimated_arrival = moment(row.estimated_arrival)
+      .format("DD-MM-YYYY")
+      .toString();
+    row.anticipate_date = moment(row.anticipate_date)
+      .format("DD-MM-YYYY")
+      .toString();
+    if (row.avatar) {
+      row.avatar = Buffer.from(row.avatar).toString("binary");
+    }
+  });
+
   res.status(200).json({ DT: rows, EC: 0, EM: "Fetch list successfully." });
+};
+
+const putCancelOrder = async (req, res, next) => {
+  let { orderID } = req.body;
+
+  await connection.execute(
+    "UPDATE `transport_order` SET status = ? WHERE order_id = ?",
+    ["Canceled", orderID]
+  );
+
+  res.status(200).json({ DT: null, EC: 0, EM: "Order has been canceled." });
 };
 
 module.exports = {
@@ -143,4 +170,5 @@ module.exports = {
   putUpdateTransportStatus,
   getOrderByTrip,
   getOrderByCustomer,
+  putCancelOrder,
 };

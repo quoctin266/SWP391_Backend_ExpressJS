@@ -51,6 +51,7 @@ import {
   putUpdateTransportStatus,
   getOrderByTrip,
   getOrderByCustomer,
+  putCancelOrder,
 } from "../controllers/orderController";
 import {
   getAllRoute,
@@ -162,6 +163,7 @@ router.get(
   "/api/v1/order-by-customer/:accountID",
   tryCatch(getOrderByCustomer)
 );
+router.put("/api/v1/cancel-order", tryCatch(putCancelOrder));
 
 router.post("/api/v1/create-route", tryCatch(postCreateRoute));
 router.put("/api/v1/update-route", tryCatch(putUpdateRoute));
