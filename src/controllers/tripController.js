@@ -92,6 +92,28 @@ const postCreateStation = async (req, res, next) => {
   res.status(200).json({ DT: null, EC: 0, EM: "Station added successfully." });
 };
 
+const putUpdateStation = async (req, res, next) => {
+  let { name, address, id } = req.body;
+
+  await connection.execute(
+    "UPDATE `station` SET name = ?, address = ? WHERE station_id = ?",
+    [name, address, id]
+  );
+
+  res.status(200).json({ DT: null, EC: 0, EM: "Update successfully." });
+};
+
+const deleteStation = async (req, res, next) => {
+  let id = req.params.id;
+
+  await connection.execute(
+    "UPDATE `station` SET deleted = true WHERE station_id = ?",
+    [id]
+  );
+
+  res.status(200).json({ DT: null, EC: 0, EM: "Deleted successfully." });
+};
+
 module.exports = {
   getAllVehicle,
   getAllDriver,
@@ -100,4 +122,6 @@ module.exports = {
   putUpdateVehicle,
   deleteVehicle,
   postCreateStation,
+  putUpdateStation,
+  deleteStation,
 };

@@ -118,6 +118,21 @@ const getOrderByTrip = async (req, res, next) => {
   res.status(200).json({ DT: rows, EC: 0, EM: "Fetch list successfully." });
 };
 
+const getOrderByCustomer = async (req, res, next) => {
+  let accountID = req.params.accountID;
+
+  const [rows] = await connection.execute(
+    "SELECT * FROM `transport_order` JOIN `payment_method` on transport_order.payment_method_id = payment_method.id JOIN `service_package` on transport_order.package_id = service_package.package_id JOIN `customer` on customer.customer_id = transport_order.customer_id JOIN `account` on account.account_id = customer.account_id where account.account_id = ?",
+    [accountID]
+  );
+
+  if (rows.length === 0) {
+    throw new AppError(RECORD_NOTFOUND, "No records were found.", 200);
+  }
+
+  res.status(200).json({ DT: rows, EC: 0, EM: "Fetch list successfully." });
+};
+
 module.exports = {
   getOrderList,
   getCustomer,
@@ -127,4 +142,5 @@ module.exports = {
   deleteTransportStatus,
   putUpdateTransportStatus,
   getOrderByTrip,
+  getOrderByCustomer,
 };

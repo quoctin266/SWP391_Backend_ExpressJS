@@ -50,6 +50,7 @@ import {
   deleteTransportStatus,
   putUpdateTransportStatus,
   getOrderByTrip,
+  getOrderByCustomer,
 } from "../controllers/orderController";
 import {
   getAllRoute,
@@ -79,6 +80,8 @@ import {
   putUpdateVehicle,
   deleteVehicle,
   postCreateStation,
+  putUpdateStation,
+  deleteStation,
 } from "../controllers/tripController";
 import tryCatch from "../utils/tryCatch";
 
@@ -155,6 +158,10 @@ router.get("/api/v1/pending-order", tryCatch(getPendingOrder));
 router.put("/api/v1/assign-order", tryCatch(putAssignOrder));
 router.get("/api/v1/order-by-trip/:tripID", tryCatch(getOrderByTrip));
 router.get("/api/v1/all-feedback", tryCatch(getAllFeedback));
+router.get(
+  "/api/v1/order-by-customer/:accountID",
+  tryCatch(getOrderByCustomer)
+);
 
 router.post("/api/v1/create-route", tryCatch(postCreateRoute));
 router.put("/api/v1/update-route", tryCatch(putUpdateRoute));
@@ -178,5 +185,7 @@ router.post("/api/v1/create-vehicle", tryCatch(postCreateVehicle));
 router.put("/api/v1/update-vehicle", tryCatch(putUpdateVehicle));
 router.delete("/api/v1/delete-vehicle/:id", tryCatch(deleteVehicle));
 router.post("/api/v1/create-station", tryCatch(postCreateStation));
+router.put("/api/v1/update-station", tryCatch(putUpdateStation));
+router.delete("/api/v1/delete-station/:id", tryCatch(deleteStation));
 
 module.exports = router;

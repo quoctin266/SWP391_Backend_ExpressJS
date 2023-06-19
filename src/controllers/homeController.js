@@ -77,7 +77,7 @@ const getAllShippingCondition = async (req, res) => {
 };
 
 const getStation = async (req, res, next) => {
-  let sql = "SELECT station_id, name FROM `station` where deleted = false";
+  let sql = "SELECT * FROM `station` where deleted = false";
 
   const [rows] = await connection.execute(sql);
   if (rows.length === 0) {
