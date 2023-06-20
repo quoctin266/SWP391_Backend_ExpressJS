@@ -85,6 +85,12 @@ import {
   deleteStation,
 } from "../controllers/tripController";
 import tryCatch from "../utils/tryCatch";
+import {
+  getAllAccount,
+  putUpdateAccount,
+  postCreateAccount,
+  getDashboard,
+} from "../controllers/accountController";
 
 const router = express.Router();
 
@@ -189,5 +195,10 @@ router.delete("/api/v1/delete-vehicle/:id", tryCatch(deleteVehicle));
 router.post("/api/v1/create-station", tryCatch(postCreateStation));
 router.put("/api/v1/update-station", tryCatch(putUpdateStation));
 router.delete("/api/v1/delete-station/:id", tryCatch(deleteStation));
+
+router.get("/api/v1/all-account", tryCatch(getAllAccount));
+router.put("/api/v1/update-account", tryCatch(putUpdateAccount));
+router.post("/api/v1/create-account", tryCatch(postCreateAccount));
+router.get("/api/v1/dashboard", tryCatch(getDashboard));
 
 module.exports = router;
