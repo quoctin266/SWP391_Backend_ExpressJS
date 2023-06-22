@@ -36,7 +36,7 @@ const getTripList = async (req, res, next) => {
   let routeID = req.params.routeID;
 
   const [rows] = await connection.execute(
-    "SELECT * FROM `trip` WHERE route_id = ? and deleted = false",
+    "SELECT * FROM `trip` JOIN `transport_vehicle` on trip.vehicle_id = transport_vehicle.vehicle_id JOIN `trip_driver` on trip.trip_id = trip_driver.trip_id JOIN `driver` on trip_driver.driver_id = driver.driver_id WHERE route_id = ? and trip_driver.main_driver = true and trip.deleted = false",
     [routeID]
   );
 
