@@ -63,7 +63,19 @@ const putUpdateRoute = async (req, res, next) => {
   res.status(200).json({ DT: null, EC: 0, EM: "Update route successfully." });
 };
 
+const deleteRoute = async (req, res, next) => {
+  let routeID = req.params.routeID;
+
+  await connection.execute(
+    "UPDATE `route` SET deleted = true WHERE route_id = ?",
+    [routeID]
+  );
+
+  res.status(200).json({ DT: null, EC: 0, EM: "Delete route successfully." });
+};
+
 module.exports = {
   postCreateRoute,
   putUpdateRoute,
+  deleteRoute,
 };

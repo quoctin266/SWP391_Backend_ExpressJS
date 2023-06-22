@@ -72,6 +72,7 @@ import {
 import {
   postCreateRoute,
   putUpdateRoute,
+  deleteRoute,
 } from "../controllers/routeController";
 import {
   getAllVehicle,
@@ -83,6 +84,7 @@ import {
   postCreateStation,
   putUpdateStation,
   deleteStation,
+  deleteTrip,
 } from "../controllers/tripController";
 import tryCatch from "../utils/tryCatch";
 import {
@@ -173,11 +175,13 @@ router.put("/api/v1/cancel-order", tryCatch(putCancelOrder));
 
 router.post("/api/v1/create-route", tryCatch(postCreateRoute));
 router.put("/api/v1/update-route", tryCatch(putUpdateRoute));
+router.delete("/api/v1/delete-route/:routeID", tryCatch(deleteRoute));
 
 router.get("/api/v1/allvehicle", tryCatch(getAllVehicle));
 router.get("/api/v1/alldriver", tryCatch(getAllDriver));
 router.post("/api/v1/create-trip", tryCatch(postCreateTrip));
 router.post("/api/v1/estimate-cost", tryCatch(getEstimateCost));
+router.delete("/api/v1/delete-trip/:tripID", tryCatch(deleteTrip));
 
 router.post("/api/v1/create-payment", tryCatch(postCreatePayment));
 router.get("/api/v1/all-payment", tryCatch(getAllPayment));

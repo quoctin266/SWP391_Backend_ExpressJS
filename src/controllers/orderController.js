@@ -108,7 +108,7 @@ const getOrderByTrip = async (req, res, next) => {
   let tripID = req.params.tripID;
 
   const [rows] = await connection.execute(
-    "SELECT * FROM `transport_order` JOIN `payment_method` on transport_order.payment_method_id = payment_method.id JOIN `service_package` on transport_order.package_id = service_package.package_id where trip_id = ?",
+    "SELECT * FROM `transport_order` JOIN `payment_method` on transport_order.payment_method_id = payment_method.id JOIN `service_package` on transport_order.package_id = service_package.package_id JOIN `customer` on transport_order.customer_id = customer.customer_id where trip_id = ?",
     [tripID]
   );
 

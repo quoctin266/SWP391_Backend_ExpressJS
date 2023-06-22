@@ -114,6 +114,17 @@ const deleteStation = async (req, res, next) => {
   res.status(200).json({ DT: null, EC: 0, EM: "Deleted successfully." });
 };
 
+const deleteTrip = async (req, res, next) => {
+  let tripID = req.params.tripID;
+
+  await connection.execute(
+    "UPDATE `trip` SET deleted = true WHERE trip_id = ?",
+    [tripID]
+  );
+
+  res.status(200).json({ DT: null, EC: 0, EM: "Deleted successfully." });
+};
+
 module.exports = {
   getAllVehicle,
   getAllDriver,
@@ -124,4 +135,5 @@ module.exports = {
   postCreateStation,
   putUpdateStation,
   deleteStation,
+  deleteTrip,
 };
