@@ -106,7 +106,7 @@ const getAllFAQ = async (req, res, next) => {
 };
 
 const getEstimateCost = async (req, res, next) => {
-  let { birdCount, distance } = req.body;
+  let { cageID, birdCount, distance } = req.body;
   let pricingResult;
 
   if (!distance) {
@@ -127,10 +127,15 @@ const getEstimateCost = async (req, res, next) => {
     pricingResult = lastRow[0];
   }
 
+  const [cageRow] = await connection.execute(
+    "SELECT capacity_unit FROM `bird_cage` WHERE cage_id = ? and deleted = false",
+    [cageID]
+  );
+
   let totalCost =
     pricingResult.initial_cost +
     pricingResult.additional_bird_cost * (birdCount - 1) +
-    pricingResult.unit_cost * birdCount;
+    pricingResult.unit_cost * cageRow[0].capacity_unit * birdCount;
 
   const [packageRow] = await connection.execute(
     "SELECT price FROM `service_package` WHERE package_id = ? and deleted = false",

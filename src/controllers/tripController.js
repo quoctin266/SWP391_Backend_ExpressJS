@@ -1,6 +1,23 @@
 import connection from "../config/connectDB";
 import { RECORD_NOTFOUND } from "../utils/errorCodes";
 import AppError from "../custom/AppError";
+import moment from "moment";
+
+const getAllTrip = async (req, res, next) => {
+  const [rows] = await connection.execute(
+    "SELECT * FROM `trip` JOIN `route` ON trip.route_id = route.route_id WHERE trip.deleted = false"
+  );
+
+  rows.forEach((row) => {
+    row.departure_date = moment(row.departure_date)
+      .format("DD-MM-YYYY HH:mm")
+      .toString();
+  });
+
+  res
+    .status(200)
+    .json({ DT: rows, EC: 0, EM: "Fetch trip list successfully." });
+};
 
 const getAllVehicle = async (req, res, next) => {
   const [rows] = await connection.execute(
@@ -136,4 +153,5 @@ module.exports = {
   putUpdateStation,
   deleteStation,
   deleteTrip,
+  getAllTrip,
 };
