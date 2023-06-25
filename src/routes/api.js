@@ -86,6 +86,7 @@ import {
   deleteStation,
   deleteTrip,
   getAllTrip,
+  putUpdateTrip,
 } from "../controllers/tripController";
 import tryCatch from "../utils/tryCatch";
 import {
@@ -184,6 +185,7 @@ router.get("/api/v1/alldriver", tryCatch(getAllDriver));
 router.post("/api/v1/create-trip", tryCatch(postCreateTrip));
 router.post("/api/v1/estimate-cost", tryCatch(getEstimateCost));
 router.delete("/api/v1/delete-trip/:tripID", tryCatch(deleteTrip));
+router.put("/api/v1/update-trip", tryCatch(putUpdateTrip));
 
 router.post("/api/v1/create-payment", tryCatch(postCreatePayment));
 router.get("/api/v1/all-payment", tryCatch(getAllPayment));

@@ -142,6 +142,28 @@ const deleteTrip = async (req, res, next) => {
   res.status(200).json({ DT: null, EC: 0, EM: "Deleted successfully." });
 };
 
+const putUpdateTrip = async (req, res, next) => {
+  let { tripID, driverInfo, depart, vehicleID } = req.body;
+
+  await connection.execute(
+    "UPDATE `trip` SET departure_date = ?, vehicle_id = ? WHERE trip_id = ?",
+    [depart, vehicleID, tripID]
+  );
+
+  await connection.execute("DELETE FROM `trip_driver` WHERE trip_id = ?", [
+    tripID,
+  ]);
+
+  for (const driver of driverInfo) {
+    await connection.execute(
+      "INSERT INTO `trip_driver` (trip_id, driver_id, main_driver) VALUES (?, ?, ?)",
+      [tripID, driver.driver_id, driver.main_driver]
+    );
+  }
+
+  res.status(200).json({ DT: null, EC: 0, EM: "Update successfully." });
+};
+
 module.exports = {
   getAllVehicle,
   getAllDriver,
@@ -154,4 +176,5 @@ module.exports = {
   deleteStation,
   deleteTrip,
   getAllTrip,
+  putUpdateTrip,
 };
