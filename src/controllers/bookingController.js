@@ -8,7 +8,7 @@ const getCustomerByAccount = async (req, res, next) => {
   let accountID = req.params.accountID;
 
   const [rows] = await connection.execute(
-    "SELECT * FROM `customer` where account_id = ?",
+    "SELECT * FROM `customer` where account_id = ? and deleted = false",
     [accountID]
   );
 

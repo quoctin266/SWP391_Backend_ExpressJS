@@ -18,6 +18,7 @@ import {
   putUpdateProfile,
   putResetPassword,
   postCreateSender,
+  deleteSender,
 } from "../controllers/authController";
 import { getAllService } from "../controllers/serviceController";
 import {
@@ -122,6 +123,7 @@ router.post("/api/v1/sender", tryCatch(postCreateSender));
 router.get("/api/v1/station", tryCatch(getStation));
 router.put("/api/v1/update-profile", tryCatch(putUpdateProfile));
 router.put("/api/v1/reset-password", tryCatch(putResetPassword));
+router.delete("/api/v1/delete-sender/:customerID", tryCatch(deleteSender));
 
 router.get("/api/v1/faq", tryCatch(getAllFAQ));
 router.get("/api/v1/service", tryCatch(getAllService));

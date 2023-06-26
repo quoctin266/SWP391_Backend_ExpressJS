@@ -163,10 +163,20 @@ const postCreateSender = async (req, res, next) => {
   res.status(200).json({ DT: null, EC: 0, EM: "Sender created successfully." });
 };
 
+const deleteSender = async (req, res, next) => {
+  let customerID = req.params.customerID;
+
+  let sql = "UPDATE `customer` SET deleted = true WHERE customer_id = ?";
+  await connection.execute(sql, [customerID]);
+
+  res.status(200).json({ DT: null, EC: 0, EM: "Deleted successfully." });
+};
+
 module.exports = {
   postLogin,
   postSignup,
   putUpdateProfile,
   putResetPassword,
   postCreateSender,
+  deleteSender,
 };
