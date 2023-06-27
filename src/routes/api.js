@@ -19,6 +19,9 @@ import {
   putResetPassword,
   postCreateSender,
   deleteSender,
+  putUpdateSender,
+  recoverPassword,
+  putChangePassword,
 } from "../controllers/authController";
 import { getAllService } from "../controllers/serviceController";
 import {
@@ -124,6 +127,9 @@ router.get("/api/v1/station", tryCatch(getStation));
 router.put("/api/v1/update-profile", tryCatch(putUpdateProfile));
 router.put("/api/v1/reset-password", tryCatch(putResetPassword));
 router.delete("/api/v1/delete-sender/:customerID", tryCatch(deleteSender));
+router.put("/api/v1/update-sender", tryCatch(putUpdateSender));
+router.post("/api/v1/recover-pw", tryCatch(recoverPassword));
+router.put("/api/v1/change-pw", tryCatch(putChangePassword));
 
 router.get("/api/v1/faq", tryCatch(getAllFAQ));
 router.get("/api/v1/service", tryCatch(getAllService));

@@ -1,15 +1,19 @@
 import connection from "../config/connectDB";
-import _ from "lodash";
+import _, { result } from "lodash";
 import {
   AUTHENTICATION_FAIL,
   DUPLICATE_EMAIL,
   DUPLICATE_USERNAME,
   REGISTER_FAIL,
-  UPDATE_FAIL,
   WRONG_PASSWORD,
+  RECORD_NOTFOUND,
 } from "../utils/errorCodes";
 import AppError from "../custom/AppError";
 import moment from "moment";
+import transporter from "../services/sendGmail";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 const postLogin = async (req, res, next) => {
   let { email, password, delay } = req.body;
@@ -85,8 +89,8 @@ const putUpdateProfile = async (req, res, next) => {
 
   if (rows[0].email !== email) {
     sql = "SELECT * FROM `account` where email = ?";
-    [rows] = await connection.execute(sql, [email]);
-    if (rows.length > 0) {
+    const [result] = await connection.execute(sql, [email]);
+    if (result.length > 0) {
       throw new AppError(
         DUPLICATE_EMAIL,
         "An account with this email has already existed.",
@@ -97,8 +101,8 @@ const putUpdateProfile = async (req, res, next) => {
 
   if (rows[0].username !== username) {
     sql = "SELECT * FROM `account` where username = ?";
-    [rows] = await connection.execute(sql, [username]);
-    if (rows.length > 0) {
+    const [result] = await connection.execute(sql, [username]);
+    if (result.length > 0) {
       throw new AppError(
         DUPLICATE_USERNAME,
         "This username has already been taken.",
@@ -172,6 +176,87 @@ const deleteSender = async (req, res, next) => {
   res.status(200).json({ DT: null, EC: 0, EM: "Deleted successfully." });
 };
 
+const putUpdateSender = async (req, res, next) => {
+  let { customerID, name, address, phone } = req.body;
+
+  let sql =
+    "UPDATE `customer` SET full_name = ?, address = ?, phone_number = ? WHERE customer_id = ?";
+  await connection.execute(sql, [name, address, phone, customerID]);
+
+  res.status(200).json({ DT: null, EC: 0, EM: "Update successfully." });
+};
+
+const recoverPassword = async (req, res, next) => {
+  let { email } = req.body;
+
+  let sql = "SELECT * FROM `account` where email = ?";
+  const [result] = await connection.execute(sql, [email]);
+  if (result.length === 0) {
+    throw new AppError(RECORD_NOTFOUND, "Email not found.", 200);
+  }
+
+  let code = Math.floor(Math.random() * 899999 + 100000);
+
+  const mailOptions = {
+    from: process.env.SENDER_EMAIL,
+    to: email,
+    subject: `${code} is your account recovery code`,
+    html: `<div style="width: 36%;
+        font-size: 1.1em;
+        border: 1px solid #e5e5e5;
+        border-radius: 15px;
+        padding: 2%; margin: 0 auto;">
+          <div style="margin: 6% 0">Hi ${result[0].username},</div>
+          <div style="margin-bottom: 8%;">
+            We received a request to reset your password. <br />
+            Enter the following password reset code:
+          </div>
+          <div style="margin-bottom: 7%;
+        padding: 10px 15px;
+        border-radius: 8px;
+        border: 1px solid #1d82ff;
+        background-color: aliceblue;
+        color:black;
+        font-weight: 600;
+        font-size: 18px; width:70px; text-align:center" disabled>${code}</div>
+          <div style="margin-bottom: 5%;">Before changing password, you have to confirm your password reset code.</div>
+          <a href="http://localhost:3000/check-code" style="border-radius: 9px;
+          padding: 10px 0;
+          border: 1px solid #4095ff;
+          width: 95%;
+          background-color: #0477ff;
+          text-decoration:none;
+          display:block;
+          font-size:1.1em;color: white; cursor:pointer;font-weight:600; text-align:center">Confirm Code</a>
+        </div>`,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(error);
+    } else console.log("Email sent: ", info.response);
+  });
+
+  res.status(200).json({
+    DT: { code: code, email: email },
+    EC: 0,
+    EM: "Check your email for code.",
+  });
+};
+
+const putChangePassword = async (req, res, next) => {
+  let { email, newPassword } = req.body;
+
+  let sql = "UPDATE `account` SET password = ? WHERE email = ?";
+  await connection.execute(sql, [newPassword, email]);
+
+  res.status(200).json({
+    DT: null,
+    EC: 0,
+    EM: "Reset password successfully.",
+  });
+};
+
 module.exports = {
   postLogin,
   postSignup,
@@ -179,4 +264,7 @@ module.exports = {
   putResetPassword,
   postCreateSender,
   deleteSender,
+  putUpdateSender,
+  recoverPassword,
+  putChangePassword,
 };
