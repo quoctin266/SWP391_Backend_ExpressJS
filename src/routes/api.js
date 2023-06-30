@@ -98,6 +98,7 @@ import {
   putUpdateAccount,
   postCreateAccount,
   getDashboard,
+  getYearRevenue,
 } from "../controllers/accountController";
 
 const router = express.Router();
@@ -216,5 +217,6 @@ router.get("/api/v1/all-account", tryCatch(getAllAccount));
 router.put("/api/v1/update-account", tryCatch(putUpdateAccount));
 router.post("/api/v1/create-account", tryCatch(postCreateAccount));
 router.get("/api/v1/dashboard", tryCatch(getDashboard));
+router.get("/api/v1/revenue/:year", tryCatch(getYearRevenue));
 
 module.exports = router;
