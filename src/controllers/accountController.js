@@ -1,6 +1,8 @@
 import connection from "../config/connectDB";
 import { RECORD_NOTFOUND } from "../utils/errorCodes";
 import AppError from "../custom/AppError";
+import _ from "lodash";
+import moment from "moment";
 
 const getAllAccount = async (req, res, next) => {
   const [rows] = await connection.execute(
@@ -73,20 +75,24 @@ const getDashboard = async (req, res, next) => {
   const [rows] = await connection.execute("SELECT * FROM `account`");
 
   let customerCount = 0;
-  let staffCount = 0;
-  let managerCount = 0;
-  let dataStation = [];
+  let completed = 0;
+  let canceled = 0;
+  let dataStationDepart = [];
+  let dataStationArrive = [];
 
   rows.forEach((row) => {
     if (row.role === "customer") customerCount += 1;
-    else if (row.role === "staff") staffCount += 1;
-    else if (row.role === "manager") managerCount += 1;
   });
 
   const [orders] = await connection.execute("SELECT * FROM `transport_order`");
   const [stations] = await connection.execute(
     "SELECT * FROM `station` where deleted = false"
   );
+
+  orders.forEach((order) => {
+    if (order.status === "Completed") completed += 1;
+    if (order.status === "Canceled") canceled += 1;
+  });
 
   stations.forEach((station) => {
     let depart = 0;
@@ -95,19 +101,23 @@ const getDashboard = async (req, res, next) => {
       if (order.departure_location === station.name) depart += 1;
       if (order.arrival_location === station.name) arrive += 1;
     });
-    dataStation.push({
+    dataStationDepart.push({
       name: station.name,
       Depart: depart,
+    });
+    dataStationArrive.push({
+      name: station.name,
       Arrive: arrive,
     });
   });
 
   let dashboardData = {
     customer: customerCount,
-    staff: staffCount,
-    manager: managerCount,
+    completed: completed,
+    canceled: canceled,
     orders: orders.length,
-    station: dataStation,
+    stationDepart: dataStationDepart,
+    stationArrive: dataStationArrive,
   };
 
   res.status(200).json({
@@ -117,9 +127,45 @@ const getDashboard = async (req, res, next) => {
   });
 };
 
+const getYearRevenue = async (req, res, next) => {
+  let year = req.params.year;
+
+  const [rows] = await connection.execute(
+    "SELECT * FROM `transport_order` WHERE YEAR(created_time) = ? AND status = ?",
+    [year, "Completed"]
+  );
+  if (rows.length === 0) {
+    throw new AppError(RECORD_NOTFOUND, "No data were found.", 200);
+  }
+
+  let revenueData = [];
+  for (let i = 1; i < 13; i++) {
+    let income = 0;
+    rows.forEach((order) => {
+      let date = moment(order.created_time, "YYYY-MM-DD");
+      if (+date.format("M") === i) {
+        income += order.total_cost;
+      }
+    });
+    revenueData.push({
+      month: moment()
+        .month(i - 1)
+        .format("MMM"),
+      Income: income,
+    });
+  }
+
+  res.status(200).json({
+    DT: revenueData,
+    EC: 0,
+    EM: "Fetch revenue data successfully.",
+  });
+};
+
 module.exports = {
   getAllAccount,
   putUpdateAccount,
   postCreateAccount,
   getDashboard,
+  getYearRevenue,
 };

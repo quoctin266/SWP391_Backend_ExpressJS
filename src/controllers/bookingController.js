@@ -49,16 +49,18 @@ const getTotalCost = async (req, res, next) => {
     pricingResult.initial_cost +
     pricingResult.additional_bird_cost * (birdList.length - 1);
 
+  let totalUnit = 0;
   for (const bird of birdList) {
     const [capacityRow] = await connection.execute(
       "SELECT capacity_unit FROM `bird_cage` where cage_id = ? and deleted = false",
       [bird.cage]
     );
+    totalUnit += capacityRow[0].capacity_unit;
     totalCost += capacityRow[0].capacity_unit * pricingResult.unit_cost;
   }
 
   const [packageRow] = await connection.execute(
-    "SELECT price FROM `service_package` WHERE package_id = ? and deleted = false",
+    "SELECT * FROM `service_package` WHERE package_id = ? and deleted = false",
     [packageID]
   );
   totalCost += packageRow[0].price;
@@ -66,6 +68,14 @@ const getTotalCost = async (req, res, next) => {
   res.status(200).json({
     DT: {
       totalCost: totalCost,
+      distance: distance,
+      initCost: pricingResult.initial_cost,
+      extraBird: birdList.length - 1,
+      extraBirdCost: pricingResult.additional_bird_cost * (birdList.length - 1),
+      capacityUnit: totalUnit,
+      unitCost: totalUnit * pricingResult.unit_cost,
+      package: packageRow[0].package_name,
+      packageCost: packageRow[0].price,
     },
     EC: 0,
     EM: "Calculate cost successfully.",
