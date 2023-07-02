@@ -45,7 +45,9 @@ const postNewUser = async (req, res) => {
 
 // api used for real features
 const getAllNews = async (req, res) => {
-  const [rows] = await connection.execute("SELECT * FROM `news`");
+  const [rows] = await connection.execute(
+    "SELECT * FROM `news` where deleted = false"
+  );
   res.json(rows);
 };
 
@@ -153,11 +155,17 @@ const getEstimateCost = async (req, res, next) => {
 };
 
 const postCreateFeedback = async (req, res, next) => {
-  let { accountID, title, description, createTime } = req.body;
+  let { accountID, title, description, createTime, rate } = req.body;
   let sql =
-    "INSERT INTO `feedback` (title, description, created_time, account_id) VALUES (?, ?, ?, ?)";
+    "INSERT INTO `feedback` (title, description, created_time, account_id, rate) VALUES (?, ?, ?, ?, ?)";
 
-  await connection.execute(sql, [title, description, createTime, accountID]);
+  await connection.execute(sql, [
+    title,
+    description,
+    createTime,
+    accountID,
+    rate,
+  ]);
 
   res
     .status(200)
