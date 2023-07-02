@@ -92,7 +92,6 @@ import {
   getAllTrip,
   putUpdateTrip,
 } from "../controllers/tripController";
-import tryCatch from "../utils/tryCatch";
 import {
   getAllAccount,
   putUpdateAccount,
@@ -100,6 +99,15 @@ import {
   getDashboard,
   getYearRevenue,
 } from "../controllers/accountController";
+import {
+  postCreateFAQ,
+  putUpdateFAQ,
+  deleteFAQ,
+  postCreateArticle,
+  putUpdateArticle,
+  deleteArticle,
+} from "../controllers/webcontentController";
+import tryCatch from "../utils/tryCatch";
 
 const router = express.Router();
 
@@ -218,5 +226,12 @@ router.put("/api/v1/update-account", tryCatch(putUpdateAccount));
 router.post("/api/v1/create-account", tryCatch(postCreateAccount));
 router.get("/api/v1/dashboard", tryCatch(getDashboard));
 router.get("/api/v1/revenue/:year", tryCatch(getYearRevenue));
+
+router.post("/api/v1/create-qa", tryCatch(postCreateFAQ));
+router.put("/api/v1/update-qa", tryCatch(putUpdateFAQ));
+router.delete("/api/v1/delete-qa/:id", tryCatch(deleteFAQ));
+router.post("/api/v1/create-article", tryCatch(postCreateArticle));
+router.put("/api/v1/update-article", tryCatch(putUpdateArticle));
+router.delete("/api/v1/delete-article/:id", tryCatch(deleteArticle));
 
 module.exports = router;
