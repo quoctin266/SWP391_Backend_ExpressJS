@@ -197,6 +197,17 @@ const getAllFeedback = async (req, res, next) => {
   });
 };
 
+const deleteFeedback = async (req, res, next) => {
+  let id = req.params.id;
+
+  await connection.execute(
+    "UPDATE `feedback` SET deleted = true WHERE feedback_id = ?",
+    [id]
+  );
+
+  res.status(200).json({ DT: null, EC: 0, EM: "Removed successfully." });
+};
+
 module.exports = {
   getHomepage,
   getUsers,
@@ -209,4 +220,5 @@ module.exports = {
   getEstimateCost,
   postCreateFeedback,
   getAllFeedback,
+  deleteFeedback,
 };
