@@ -29,6 +29,15 @@ const postLogin = async (req, res, next) => {
     );
   }
 
+  if (rows[0].account_status === "disabled") {
+    throw new AppError(
+      AUTHENTICATION_FAIL,
+      "Account has been suspended",
+      200,
+      delay
+    );
+  }
+
   if (rows[0].birthday) {
     rows[0].birthday = moment(rows[0].birthday).format("YYYY-MM-DD");
   }

@@ -11,6 +11,7 @@ import {
   getEstimateCost,
   postCreateFeedback,
   getAllFeedback,
+  deleteFeedback,
 } from "../controllers/homeController";
 import {
   postLogin,
@@ -186,6 +187,7 @@ router.get("/api/v1/pending-order", tryCatch(getPendingOrder));
 router.put("/api/v1/assign-order", tryCatch(putAssignOrder));
 router.get("/api/v1/order-by-trip/:tripID", tryCatch(getOrderByTrip));
 router.get("/api/v1/all-feedback", tryCatch(getAllFeedback));
+router.delete("/api/v1/delete-feedback/:id", tryCatch(deleteFeedback));
 router.get(
   "/api/v1/order-by-customer/:accountID",
   tryCatch(getOrderByCustomer)
