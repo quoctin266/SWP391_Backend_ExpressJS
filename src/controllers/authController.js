@@ -7,6 +7,7 @@ import {
   REGISTER_FAIL,
   WRONG_PASSWORD,
   RECORD_NOTFOUND,
+  SEND_EMAIL_FAIL,
 } from "../utils/errorCodes";
 import AppError from "../custom/AppError";
 import moment from "moment";
@@ -243,6 +244,7 @@ const recoverPassword = async (req, res, next) => {
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       console.log(error);
+      throw new AppError(SEND_EMAIL_FAIL, "Email not sent.", 200);
     } else console.log("Email sent: ", info.response);
   });
 

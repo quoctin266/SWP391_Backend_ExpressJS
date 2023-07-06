@@ -24,7 +24,19 @@ import {
   recoverPassword,
   putChangePassword,
 } from "../controllers/authController";
-import { getAllService } from "../controllers/serviceController";
+import {
+  getAllService,
+  postCreateMail,
+  getStaffInbox,
+  deleteInboxMail,
+  getStaffTrash,
+  putRecoverMail,
+  getSentMail,
+  deleteSentMail,
+  getAllInbox,
+  getAllTrash,
+  postReplyMail,
+} from "../controllers/serviceController";
 import {
   getAllCage,
   getAllPackage,
@@ -235,5 +247,16 @@ router.delete("/api/v1/delete-qa/:id", tryCatch(deleteFAQ));
 router.post("/api/v1/create-article", tryCatch(postCreateArticle));
 router.put("/api/v1/update-article", tryCatch(putUpdateArticle));
 router.delete("/api/v1/delete-article/:id", tryCatch(deleteArticle));
+
+router.post("/api/v1/create-mail", tryCatch(postCreateMail));
+router.get("/api/v1/staff-inbox/:email", tryCatch(getStaffInbox));
+router.delete("/api/v1/delete-inbox/:id", tryCatch(deleteInboxMail));
+router.get("/api/v1/staff-trash/:email", tryCatch(getStaffTrash));
+router.put("/api/v1/recover-mail", tryCatch(putRecoverMail));
+router.get("/api/v1/sent-mail/:email", tryCatch(getSentMail));
+router.delete("/api/v1/delete-sent/:id", tryCatch(deleteSentMail));
+router.get("/api/v1/all-inbox/:email", tryCatch(getAllInbox));
+router.get("/api/v1/all-trash/:email", tryCatch(getAllTrash));
+router.post("/api/v1/reply-mail", tryCatch(postReplyMail));
 
 module.exports = router;

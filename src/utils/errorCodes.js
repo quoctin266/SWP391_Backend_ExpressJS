@@ -7,3 +7,4 @@ export const UPDATE_FAIL = 105;
 export const WRONG_PASSWORD = 106;
 export const RECORD_NOTFOUND = 107;
 export const NO_ROUTE = 108;
+export const SEND_EMAIL_FAIL = 109;

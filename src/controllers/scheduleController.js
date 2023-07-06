@@ -19,7 +19,7 @@ const getRouteDetail = async (req, res, next) => {
   let routeID = req.params.routeID;
 
   const [rows] = await connection.execute(
-    "SELECT station.station_id, station.name, route_station.station_index, route_station.driving_time, route_station.preDrivingTime, route_station.preDistance, route_station.distance FROM `route_station` JOIN `station` on route_station.station_id = station.station_id WHERE route_station.route_id = ? and station.deleted = false",
+    "SELECT station.station_id, station.name, station.address, route_station.station_index, route_station.driving_time, route_station.preDrivingTime, route_station.preDistance, route_station.distance FROM `route_station` JOIN `station` on route_station.station_id = station.station_id WHERE route_station.route_id = ?",
     [routeID]
   );
 
@@ -74,7 +74,7 @@ const getDriverList = async (req, res, next) => {
   let tripID = req.params.tripID;
 
   const [rows] = await connection.execute(
-    "SELECT * FROM `trip_driver` JOIN `driver` on trip_driver.driver_id = driver.driver_id WHERE trip_id = ? and driver.deleted = false",
+    "SELECT * FROM `trip_driver` JOIN `driver` on trip_driver.driver_id = driver.driver_id WHERE trip_id = ?",
     [tripID]
   );
 
