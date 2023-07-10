@@ -131,6 +131,7 @@ const postNewOrder = async (req, res, next) => {
       orderID: orderID,
       estimate: generalInfo.estimate,
       created: currentTime,
+      totalCost: totalCost,
     },
     EC: 0,
     EM: "Create order successfully.",
