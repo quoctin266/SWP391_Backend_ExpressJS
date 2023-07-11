@@ -3,6 +3,10 @@ import _ from "lodash";
 import { RECORD_NOTFOUND, NO_ROUTE } from "../utils/errorCodes";
 import AppError from "../custom/AppError";
 import moment from "moment";
+import transporter from "../services/sendGmail";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 const getCustomerByAccount = async (req, res, next) => {
   let accountID = req.params.accountID;
@@ -186,6 +190,136 @@ const getAllPayment = async (req, res, next) => {
   });
 };
 
+const sendBill = async (req, res, next) => {
+  let { costSummary, customerInfo, orderID, created, email } = req.body;
+
+  const mailOptions = {
+    from: process.env.SENDER_EMAIL,
+    to: email,
+    subject: `Bird Transportation Invoice`,
+    html: `<div style="width: 80%;
+    font-size: 1.2em;
+    border: 1px solid #e5e5e5;
+    border-radius: 5px;
+    padding: 4% 0; margin: 0 auto;">
+    <div style="display:flex;
+padding-left: 8%;
+margin-bottom: 4%;">
+    <div style="width:100%">
+      <div style="margin: 6% 0; font-size: 1.5em; margin-bottom: 30px; font-weight:600">Bird Travel</div>
+      <div style="margin-bottom: 4%">
+        <div style="margin-bottom: 10px;">Booking ID: ${orderID} </div> 
+        <div> Date: ${moment(created).format("DD/MM/YYYY")}</div>
+      </div>
+       </div>
+       
+       <div style="font-size: 3em; 
+       background-color: #004b8d;
+color: aliceblue;
+padding: 0 4%;height:8vh; margin-top:40px">INVOICE</div>
+</div>
+      <hr/>
+      
+      <div style="display:flex;
+padding: 0 8%;
+margin: 5% 0">
+    <div style="width:35%">
+      <div style="font-weight:600; margin-bottom: 10px">Bill from:  </div>
+      <div style="margin-bottom: 10px;">Bird Travel</div>
+         <div style="margin-bottom: 10px;">Lot E2a-7, D1 Street, Đ. D1, Long Thanh My, Thu Duc city, Ho Chi Minh city</div>
+      <div >02873005588</div>
+    </div>
+    
+    <div style="width:35%; margin-left:150px">
+      <div style="font-weight:600; margin-bottom: 10px">Bill to:  </div>
+      <div style="margin-bottom: 10px;">${customerInfo.name}</div>
+        <div style="margin-bottom: 10px;">${customerInfo.address}</div>
+      <div >${customerInfo.phone}</div>
+    </div>
+    </div>
+    
+    <hr/>
+    
+    <div style="padding: 0 6%; margin-top: 5%">
+      <table style="font-family: arial, sans-serif;
+border-collapse: collapse;
+width: 100%;">
+<tr style="border-bottom: 1px solid gray">
+<th style=" text-align: left;
+padding: 8px;">Item</th>
+<th style=" text-align: right;
+padding: 8px;">Value</th>
+<th style=" text-align: right;
+padding: 8px;">Amount</th>
+</tr>
+
+<tr style="background-color: #dddddd;">
+<td style=" text-align: left;
+padding:15px 8px;">Distance</td>
+<td style=" text-align: right;
+padding:15px 8px;">${costSummary.distance.toFixed(1)} Km</td>
+<td style=" text-align: right;
+padding:15px 8px;">${new Intl.NumberFormat().format(
+      costSummary.initCost
+    )} VND</td>
+</tr>
+<tr >
+<td style=" text-align: left;
+padding:15px 8px;">Additional Bird</td>
+<td style=" text-align: right;
+padding:15px 8px;">${costSummary.extraBird}</td>
+<td style=" text-align: right;
+padding:15px 8px;">${new Intl.NumberFormat().format(
+      costSummary.extraBirdCost
+    )} VND</td>
+</tr>
+<tr style="background-color: #dddddd;">
+<td style=" text-align: left;
+padding:15px 8px;">Capacity Unit</td>
+<td style=" text-align: right;
+padding:15px 8px;">${costSummary.capacityUnit}</td>
+<td style=" text-align: right;
+padding:15px 8px;">${new Intl.NumberFormat().format(
+      costSummary.unitCost
+    )} VND</td>
+</tr>
+<tr>
+<td style=" text-align: left;
+padding:15px 8px;">Package</td>
+<td style=" text-align: right;
+padding:15px 8px;">${costSummary.packageName}</td>
+<td style=" text-align: right;
+padding:15px 8px;">${new Intl.NumberFormat().format(
+      costSummary.packageCost
+    )} VND</td>
+</tr>
+</tr>
+<tr style="border-bottom: 1px solid gray; background-color: #07a;
+color: aliceblue;">
+<td style=" text-align: left;
+padding: 20px; text-align:center; font-size: 1.3em; font-weight:600" colSpan="2">Total</td>
+<td style=" text-align: right;
+padding: 8px;">${new Intl.NumberFormat().format(costSummary.totalCost)} VND</td>
+</tr>
+</tr>
+</table>
+</div>`,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(error);
+      throw new AppError(SEND_EMAIL_FAIL, "Email not sent.", 200);
+    } else console.log("Email sent: ", info.response);
+  });
+
+  res.status(200).json({
+    DT: null,
+    EC: 0,
+    EM: "Check your email for invoice.",
+  });
+};
+
 module.exports = {
   postNewOrder,
   getAllCage,
@@ -193,4 +327,5 @@ module.exports = {
   getAllPayment,
   getTotalCost,
   getCustomerByAccount,
+  sendBill,
 };

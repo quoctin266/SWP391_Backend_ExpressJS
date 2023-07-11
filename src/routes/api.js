@@ -44,6 +44,7 @@ import {
   postNewOrder,
   getTotalCost,
   getCustomerByAccount,
+  sendBill,
 } from "../controllers/bookingController";
 import { getTransportStatus } from "../controllers/trackingController";
 import {
@@ -162,6 +163,7 @@ router.get("/api/v1/payment", tryCatch(getAllPayment));
 router.post("/api/v1/create-order", tryCatch(postNewOrder));
 router.post("/api/v1/total-cost", tryCatch(getTotalCost));
 router.get("/api/v1/customers/:accountID", tryCatch(getCustomerByAccount));
+router.post("/api/v1/send-bill", tryCatch(sendBill));
 
 router.get("/api/v1/transport-status/:orderID", tryCatch(getTransportStatus));
 router.get("/api/v1/price", tryCatch(getPricing));
