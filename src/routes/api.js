@@ -4,6 +4,7 @@ import {
   getUsers,
   postNewUser,
   getAllNews,
+  getNewsContent,
   getAllServicesIntro,
   getAllShippingCondition,
   getStation,
@@ -138,9 +139,10 @@ router.get("/api/v1/users", getUsers);
 router.post("/api/v1/create-user", postNewUser);
 
 // offcial API
-router.get("/api/v1/news", getAllNews);
-router.get("/api/v1/services-intro", getAllServicesIntro);
-router.get("/api/v1/shipping-condition", getAllShippingCondition);
+router.get("/api/v1/news", tryCatch(getAllNews));
+router.get("/api/v1/news-content/:id", tryCatch(getNewsContent));
+router.get("/api/v1/services-intro", tryCatch(getAllServicesIntro));
+router.get("/api/v1/shipping-condition", tryCatch(getAllShippingCondition));
 router.post("/api/v1/create-feedback", tryCatch(postCreateFeedback));
 
 router.post("/api/v1/login", tryCatch(postLogin));

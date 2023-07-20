@@ -83,7 +83,10 @@ const postCreateAccount = async (req, res, next) => {
 
 const getDashboard = async (req, res, next) => {
   let year = req.params.year;
-  const [rows] = await connection.execute("SELECT * FROM `account`");
+  const [rows] = await connection.execute(
+    "SELECT * FROM `account` WHERE YEAR(registered_date) = ?",
+    [year]
+  );
 
   let customerCount = 0;
   let completed = 0;

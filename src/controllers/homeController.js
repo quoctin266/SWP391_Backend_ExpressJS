@@ -48,7 +48,24 @@ const getAllNews = async (req, res) => {
   const [rows] = await connection.execute(
     "SELECT * FROM `news` where deleted = false"
   );
+
+  rows.forEach((row) => {
+    if (row.banner) {
+      row.banner = Buffer.from(row.banner).toString("binary");
+    }
+  });
+
   res.json(rows);
+};
+
+const getNewsContent = async (req, res) => {
+  let id = req.params.id;
+  const [rows] = await connection.execute(
+    "SELECT * FROM `news_content` where news_id = ? AND deleted = false",
+    [id]
+  );
+
+  res.status(200).json({ DT: rows, EC: 0, EM: "Fetch list successfully." });
 };
 
 const getAllServicesIntro = async (req, res) => {
@@ -213,6 +230,7 @@ module.exports = {
   getUsers,
   postNewUser,
   getAllNews,
+  getNewsContent,
   getAllServicesIntro,
   getAllShippingCondition,
   getStation,
