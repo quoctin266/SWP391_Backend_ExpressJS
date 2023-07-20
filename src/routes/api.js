@@ -4,6 +4,7 @@ import {
   getUsers,
   postNewUser,
   getAllNews,
+  getNewsContent,
   getAllServicesIntro,
   getAllShippingCondition,
   getStation,
@@ -138,9 +139,10 @@ router.get("/api/v1/users", getUsers);
 router.post("/api/v1/create-user", postNewUser);
 
 // offcial API
-router.get("/api/v1/news", getAllNews);
-router.get("/api/v1/services-intro", getAllServicesIntro);
-router.get("/api/v1/shipping-condition", getAllShippingCondition);
+router.get("/api/v1/news", tryCatch(getAllNews));
+router.get("/api/v1/news-content/:id", tryCatch(getNewsContent));
+router.get("/api/v1/services-intro", tryCatch(getAllServicesIntro));
+router.get("/api/v1/shipping-condition", tryCatch(getAllShippingCondition));
 router.post("/api/v1/create-feedback", tryCatch(postCreateFeedback));
 
 router.post("/api/v1/login", tryCatch(postLogin));
@@ -240,7 +242,7 @@ router.delete("/api/v1/delete-station/:id", tryCatch(deleteStation));
 router.get("/api/v1/all-account", tryCatch(getAllAccount));
 router.put("/api/v1/update-account", tryCatch(putUpdateAccount));
 router.post("/api/v1/create-account", tryCatch(postCreateAccount));
-router.get("/api/v1/dashboard", tryCatch(getDashboard));
+router.get("/api/v1/dashboard/:year", tryCatch(getDashboard));
 router.get("/api/v1/revenue/:year", tryCatch(getYearRevenue));
 
 router.post("/api/v1/create-qa", tryCatch(postCreateFAQ));

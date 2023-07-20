@@ -33,6 +33,8 @@ const putUpdateAccount = async (req, res, next) => {
 const postCreateAccount = async (req, res, next) => {
   let { email, username, password, role } = req.body;
 
+  let currentTime = moment().format("YYYY-MM-DD").toString();
+
   let sql = "SELECT * FROM `account` where email = ?";
   let [rows] = await connection.execute(sql, [email]);
   if (rows.length > 0) {
@@ -54,13 +56,21 @@ const postCreateAccount = async (req, res, next) => {
   }
 
   sql =
-    "INSERT INTO `account` (email, username, password, role) VALUES (?, ?, ?, ?)";
-  [rows] = await connection.execute(sql, [email, username, password, role]);
+    "INSERT INTO `account` (email, username, password, role, registered_date) VALUES (?, ?, ?, ?, ?)";
+  [rows] = await connection.execute(sql, [
+    email,
+    username,
+    password,
+    role,
+    currentTime,
+  ]);
 
-  await connection.execute(
-    "INSERT INTO `customer` (full_name, account_id)  VALUES (?, ?)",
-    [username, rows.insertId]
-  );
+  if (role === "customer") {
+    await connection.execute(
+      "INSERT INTO `customer` (full_name, account_id)  VALUES (?, ?)",
+      [username, rows.insertId]
+    );
+  }
 
   if (rows.length === 0) {
     throw new AppError(REGISTER_FAIL, "Something went wrong.", 200);
@@ -72,7 +82,11 @@ const postCreateAccount = async (req, res, next) => {
 };
 
 const getDashboard = async (req, res, next) => {
-  const [rows] = await connection.execute("SELECT * FROM `account`");
+  let year = req.params.year;
+  const [rows] = await connection.execute(
+    "SELECT * FROM `account` WHERE YEAR(registered_date) = ?",
+    [year]
+  );
 
   let customerCount = 0;
   let completed = 0;
@@ -84,7 +98,11 @@ const getDashboard = async (req, res, next) => {
     if (row.role === "customer") customerCount += 1;
   });
 
-  const [orders] = await connection.execute("SELECT * FROM `transport_order`");
+  const [orders] = await connection.execute(
+    "SELECT * FROM `transport_order` WHERE YEAR(created_time) = ?",
+    [year]
+  );
+
   const [stations] = await connection.execute(
     "SELECT * FROM `station` where deleted = false"
   );

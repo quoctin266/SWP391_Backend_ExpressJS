@@ -9,12 +9,14 @@ const errorHandler = (error, req, res, next) => {
         EM: error.message,
       });
     }, error.delay);
-  } else
+  } else {
+    console.log(error);
     return res.status(200).json({
       DT: null,
       EC: -999,
       EM: "Internal Server Error",
     });
+  }
 };
 
 module.exports = errorHandler;

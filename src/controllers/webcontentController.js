@@ -34,11 +34,24 @@ const deleteFAQ = async (req, res, next) => {
 };
 
 const postCreateArticle = async (req, res, next) => {
-  let { title, source, date, link } = req.body;
+  let { title, subtitle, intro, conclusion, banner, sectionList } = req.body;
   let sql =
-    "INSERT INTO `news` (title, source, date, link) VALUES (?, ?, ?, ?)";
+    "INSERT INTO `news` (title, sub_title, banner, intro, conclusion) VALUES (?, ?, ?, ?, ?)";
 
-  await connection.execute(sql, [title, source, date, link]);
+  const [rows] = await connection.execute(sql, [
+    title,
+    subtitle,
+    banner,
+    intro,
+    conclusion,
+  ]);
+
+  for (const section of sectionList) {
+    await connection.execute(
+      "INSERT INTO `news_content` (content_title, content_body, news_id) VALUES (?, ?, ?)",
+      [section.title, section.content, rows.insertId]
+    );
+  }
 
   res
     .status(200)
@@ -46,12 +59,24 @@ const postCreateArticle = async (req, res, next) => {
 };
 
 const putUpdateArticle = async (req, res, next) => {
-  let { title, source, date, link, id } = req.body;
+  let { title, subtitle, intro, conclusion, banner, sectionList, id } =
+    req.body;
 
   await connection.execute(
-    "UPDATE `news` SET title = ?, source = ?, date = ?, link = ? WHERE id = ?",
-    [title, source, date, link, id]
+    "UPDATE `news` SET title = ?, sub_title = ?, banner = ?, intro = ?, conclusion = ? WHERE id = ?",
+    [title, subtitle, banner, intro, conclusion, id]
   );
+
+  await connection.execute("DELETE FROM `news_content` WHERE news_id = ?", [
+    id,
+  ]);
+
+  for (const section of sectionList) {
+    await connection.execute(
+      "INSERT INTO `news_content` (content_title, content_body, news_id) VALUES (?, ?, ?)",
+      [section.title, section.content, id]
+    );
+  }
 
   res.status(200).json({ DT: null, EC: 0, EM: "Update successfully." });
 };

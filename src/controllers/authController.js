@@ -55,6 +55,8 @@ const postLogin = async (req, res, next) => {
 const postSignup = async (req, res, next) => {
   let { email, username, password } = req.body;
 
+  let currentTime = moment().format("YYYY-MM-DD").toString();
+
   let sql = "SELECT * FROM `account` where email = ?";
   let [rows] = await connection.execute(sql, [email]);
   if (rows.length > 0) {
@@ -75,8 +77,14 @@ const postSignup = async (req, res, next) => {
     );
   }
 
-  sql = "INSERT INTO `account` (email, username, password) VALUES (?, ?, ?)";
-  [rows] = await connection.execute(sql, [email, username, password]);
+  sql =
+    "INSERT INTO `account` (email, username, password, registered_date) VALUES (?, ?, ?, ?)";
+  [rows] = await connection.execute(sql, [
+    email,
+    username,
+    password,
+    currentTime,
+  ]);
 
   const [defaultCustomer] = await connection.execute(
     "INSERT INTO `customer` (full_name, account_id)  VALUES (?, ?)",
