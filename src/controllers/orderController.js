@@ -1,5 +1,5 @@
 import connection from "../config/connectDB";
-import { RECORD_NOTFOUND } from "../utils/errorCodes";
+import { RECORD_NOTFOUND, UPDATE_FAIL } from "../utils/errorCodes";
 import AppError from "../custom/AppError";
 import moment from "moment";
 
@@ -47,6 +47,21 @@ const getBirdList = async (req, res, next) => {
 
 const putUpdateOrderStatus = async (req, res, next) => {
   let { orderID, status, departDate } = req.body;
+
+  if (status === "Canceled") {
+    const [row] = await connection.execute(
+      "SELECT trip.status FROM `trip` JOIN `transport_order` on transport_order.trip_id = trip.trip_id WHERE transport_order.order_id = ?",
+      [orderID]
+    );
+
+    if (row[0].status === "Standby") {
+      await connection.execute(
+        "UPDATE `transport_order` SET trip_id = null WHERE order_id = ?",
+        [orderID]
+      );
+    } else
+      throw new AppError(UPDATE_FAIL, "Order can no longer be canceled.", 200);
+  }
 
   if (!departDate) departDate = null;
   await connection.execute(
