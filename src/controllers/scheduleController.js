@@ -183,11 +183,19 @@ const getOrderCapacity = async (req, res, next) => {
 
 const putUpdateTripStatus = async (req, res, next) => {
   let { tripID, status } = req.body;
+  let current = moment().format("YYYY-MM-DD");
 
   await connection.execute("UPDATE `trip` SET status = ? WHERE trip_id = ?", [
     status,
     tripID,
   ]);
+
+  if (status === "Departed") {
+    await connection.execute(
+      "UPDATE `transport_order` SET departure_date = ? WHERE trip_id = ?",
+      [current, tripID]
+    );
+  }
 
   res
     .status(200)
