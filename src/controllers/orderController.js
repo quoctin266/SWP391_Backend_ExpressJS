@@ -46,7 +46,7 @@ const getBirdList = async (req, res, next) => {
 };
 
 const putUpdateOrderStatus = async (req, res, next) => {
-  let { orderID, status, departDate } = req.body;
+  let { orderID, status, departDate, anticipate } = req.body;
 
   if (status === "Canceled") {
     const [row] = await connection.execute(
@@ -65,8 +65,8 @@ const putUpdateOrderStatus = async (req, res, next) => {
 
   if (!departDate) departDate = null;
   await connection.execute(
-    "UPDATE `transport_order` SET status = ?, departure_date = ? WHERE order_id = ?",
-    [status, departDate, orderID]
+    "UPDATE `transport_order` SET status = ?, departure_date = ?, anticipate_date = ? WHERE order_id = ?",
+    [status, departDate, anticipate, orderID]
   );
 
   res.status(200).json({ DT: null, EC: 0, EM: "Update successfully." });
@@ -165,6 +165,19 @@ const putCancelOrder = async (req, res, next) => {
   res.status(200).json({ DT: null, EC: 0, EM: "Order has been canceled." });
 };
 
+const putUpdateStatusOrderList = async (req, res, next) => {
+  let { orderList } = req.body;
+
+  for (const order of orderList) {
+    await connection.execute(
+      "UPDATE `transport_order` SET status = ? WHERE order_id = ?",
+      ["Completed", order.order_id]
+    );
+  }
+
+  res.status(200).json({ DT: null, EC: 0, EM: "Update status successfully." });
+};
+
 module.exports = {
   getOrderList,
   getCustomer,
@@ -176,4 +189,5 @@ module.exports = {
   getOrderByTrip,
   getOrderByCustomer,
   putCancelOrder,
+  putUpdateStatusOrderList,
 };

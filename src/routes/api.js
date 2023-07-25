@@ -71,6 +71,7 @@ import {
   getOrderByTrip,
   getOrderByCustomer,
   putCancelOrder,
+  putUpdateStatusOrderList,
 } from "../controllers/orderController";
 import {
   getAllRoute,
@@ -209,6 +210,7 @@ router.get(
   tryCatch(getOrderByCustomer)
 );
 router.put("/api/v1/cancel-order", tryCatch(putCancelOrder));
+router.put("/api/v1/update-orderlist", tryCatch(putUpdateStatusOrderList));
 
 router.post("/api/v1/create-route", tryCatch(postCreateRoute));
 router.put("/api/v1/update-route", tryCatch(putUpdateRoute));
