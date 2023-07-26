@@ -4,8 +4,11 @@ import AppError from "../custom/AppError";
 import moment from "moment";
 
 const getAllTrip = async (req, res, next) => {
+  let currentYear = moment().year();
+
   const [rows] = await connection.execute(
-    "SELECT * FROM `trip` JOIN `route` ON trip.route_id = route.route_id WHERE trip.deleted = false"
+    "SELECT * FROM `trip` JOIN `route` ON trip.route_id = route.route_id WHERE trip.deleted = false AND YEAR(trip.departure_date) = ?",
+    [currentYear]
   );
 
   rows.forEach((row) => {

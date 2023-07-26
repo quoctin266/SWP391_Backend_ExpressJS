@@ -4,8 +4,11 @@ import AppError from "../custom/AppError";
 import moment from "moment";
 
 const getOrderList = async (req, res, next) => {
+  let currentYear = moment().year();
+
   const [rows] = await connection.execute(
-    "SELECT * FROM `transport_order` JOIN `payment_method` on transport_order.payment_method_id = payment_method.id JOIN `service_package` on transport_order.package_id = service_package.package_id JOIN `customer` on transport_order.customer_id = customer.customer_id"
+    "SELECT * FROM `transport_order` JOIN `payment_method` on transport_order.payment_method_id = payment_method.id JOIN `service_package` on transport_order.package_id = service_package.package_id JOIN `customer` on transport_order.customer_id = customer.customer_id and YEAR(transport_order.created_time) = ?",
+    [currentYear]
   );
 
   if (rows.length === 0) {
