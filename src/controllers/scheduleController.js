@@ -34,10 +34,11 @@ const getRouteDetail = async (req, res, next) => {
 
 const getTripList = async (req, res, next) => {
   let routeID = req.params.routeID;
+  let currentYear = moment().year();
 
   const [rows] = await connection.execute(
-    "SELECT * FROM `trip` JOIN `transport_vehicle` on trip.vehicle_id = transport_vehicle.vehicle_id JOIN `trip_driver` on trip.trip_id = trip_driver.trip_id JOIN `driver` on trip_driver.driver_id = driver.driver_id WHERE route_id = ? and trip_driver.main_driver = true and trip.deleted = false",
-    [routeID]
+    "SELECT * FROM `trip` JOIN `transport_vehicle` on trip.vehicle_id = transport_vehicle.vehicle_id JOIN `trip_driver` on trip.trip_id = trip_driver.trip_id JOIN `driver` on trip_driver.driver_id = driver.driver_id WHERE route_id = ? and trip_driver.main_driver = true and trip.deleted = false and YEAR(trip.departure_date) = ?",
+    [routeID, currentYear]
   );
 
   if (rows.length === 0) {
